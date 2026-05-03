@@ -15,7 +15,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{01700c95-8606-446e-aab8-96975f7b1761}</ProjectGuid>
     <RootNamespace>RMGCustomizeObjectProperties</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -23,6 +23,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
     <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -31,7 +32,7 @@
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
     <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -41,9 +42,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetExt>.era</TargetExt>
+    <OutDir>D:\Games\HoMM 3 ERA\Mods\JS - new objects\EraPlugins\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.era</TargetExt>
+    <OutDir>D:\Games\HoMM 3 ERA\Mods\JS - new objects\EraPlugins\</OutDir>
   </PropertyGroup>
   <!-- Настройки отладки и компиляции определены в корневом Directory.Build.props -->
   <!-- Локальные настройки пользователя в Directory.Build.props.user -->
@@ -128,7 +131,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <OptimizeReferences>true</OptimizeReferences>
@@ -141,6 +144,11 @@
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>D:\SW\ExeMapCompiler\$(TargetName).map</MapFileName>
     </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
