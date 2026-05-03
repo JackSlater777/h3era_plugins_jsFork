@@ -1,225 +1,76 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>source files</Filter>
-    </ClCompile>
-    <ClCompile Include="RMGObjectsEditor.cpp">
-      <Filter>source files</Filter>
-    </ClCompile>
-    <ClCompile Include="RMG_SettingsDlg.cpp">
-      <Filter>SettingsDlg</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\WarehousesExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\CreatureBanksExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\ShrinesExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="..\headers\DrawPcx16ResizedBicubic.cpp">
-      <Filter>source files</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\GazeboExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\WateringPlaceExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\WoGObjectsExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\ColosseumOfTheMagiExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundManager.cpp">
-      <Filter>source files</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\UniversityExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\SpellMarketExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenderManager.cpp">
-      <Filter>ExtenderAPI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\headers\Era\era.cpp">
-      <Filter>source files</Filter>
-    </ClCompile>
-    <ClCompile Include="AdditionalProperties.cpp">
-      <Filter>source files</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\AncientLampExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\DreamTeacherExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\ExtraHints.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\FlagsExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\GraveExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\H3MapItemNew.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\HermitsShackExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\HillFortExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\JunkmanExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\MineralSpringExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\ObservatoryExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\ProspectorExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\SkeletonTransformerExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\TempleOfLoyaltyExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\TownGateExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\TrailblazerExtender.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectExtenders\WarlocksLab.cpp">
-      <Filter>Extenders</Filter>
-    </ClCompile>
+    <ClCompile Include="..\headers\DrawPcx16ResizedBicubic.cpp" />
+    <ClCompile Include="..\headers\Era\era.cpp" />
+    <ClCompile Include="AdditionalProperties.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="ObjectExtenderManager.cpp" />
+    <ClCompile Include="ObjectExtenders\AncientLampExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\CreatureBankManager.cpp" />
+    <ClCompile Include="ObjectExtenders\DreamTeacherExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\ExtraHints.cpp" />
+    <ClCompile Include="ObjectExtenders\FlagsExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\GraveExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\H3MapItemNew.cpp" />
+    <ClCompile Include="ObjectExtenders\HermitsShackExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\HillFortExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\JunkmanExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\MineralSpringExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\ObservatoryExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\ProspectorExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\SkeletonTransformerExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\SpellMarketExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\TempleOfLoyaltyExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\TownGateExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\TrailblazerExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\UniversityExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\WarlocksLab.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="ObjectExtenders\ColosseumOfTheMagiExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\CreatureBanksExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\GazeboExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\ShrinesExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\WarehousesExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\WateringPlaceExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\WoGObjectsExtender.cpp" />
+    <ClCompile Include="RMGObjectsEditor.cpp" />
+    <ClCompile Include="RMG_SettingsDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ObjectExtender.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="RMGObjectsEditor.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="RMG_SettingsDlg.h">
-      <Filter>SettingsDlg</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\CreatureBanksExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\WarehousesExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\ShrinesExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\GazeboExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\WateringPlaceExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\WoGObjectsExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\ColosseumOfTheMagiExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundManager.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\UniversityExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\SpellMarketExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenderManager.h">
-      <Filter>ExtenderAPI</Filter>
-    </ClInclude>
-    <ClInclude Include="AdditionalProperties.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\AncientLampExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\DreamTeacherExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\ExtraHints.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\FlagsExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\GraveExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\H3MapItemNew.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\HermitsShackExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\HillFortExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\JunkmanExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\MineralSpringExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\ObservatoryExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\ProspectorExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\SkeletonTransformerExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\TempleOfLoyaltyExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\TownGateExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\TrailblazerExtender.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectExtenders\WarlocksLab.h">
-      <Filter>Extenders</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="source files">
-      <UniqueIdentifier>{e9b4f00f-697c-49d7-8a0d-5d21b9998c72}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="headers">
-      <UniqueIdentifier>{0017b8c2-4edb-4895-b9e0-3f7b6b0280fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SettingsDlg">
-      <UniqueIdentifier>{c667124d-4d02-4df5-8fc7-04aaaf4c7305}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Extenders">
-      <UniqueIdentifier>{572dc5ac-3f4d-41de-b560-1a6862f4dfd0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ExtenderAPI">
-      <UniqueIdentifier>{dcf95c20-2b30-424b-928e-4a99fe6afe19}</UniqueIdentifier>
-    </Filter>
+    <ClInclude Include="AdditionalProperties.h" />
+    <ClInclude Include="ObjectExtenderManager.h" />
+    <ClInclude Include="ObjectExtenders\AncientLampExtender.h" />
+    <ClInclude Include="ObjectExtenders\CreatureBankManager.h" />
+    <ClInclude Include="ObjectExtenders\DreamTeacherExtender.h" />
+    <ClInclude Include="ObjectExtenders\ExtraHints.h" />
+    <ClInclude Include="ObjectExtenders\FlagsExtender.h" />
+    <ClInclude Include="ObjectExtenders\GraveExtender.h" />
+    <ClInclude Include="ObjectExtenders\H3MapItemNew.h" />
+    <ClInclude Include="ObjectExtenders\HermitsShackExtender.h" />
+    <ClInclude Include="ObjectExtenders\HillFortExtender.h" />
+    <ClInclude Include="ObjectExtenders\JunkmanExtender.h" />
+    <ClInclude Include="ObjectExtenders\MineralSpringExtender.h" />
+    <ClInclude Include="ObjectExtenders\ObservatoryExtender.h" />
+    <ClInclude Include="ObjectExtenders\ProspectorExtender.h" />
+    <ClInclude Include="ObjectExtenders\SkeletonTransformerExtender.h" />
+    <ClInclude Include="ObjectExtenders\SpellMarketExtender.h" />
+    <ClInclude Include="ObjectExtenders\TempleOfLoyaltyExtender.h" />
+    <ClInclude Include="ObjectExtenders\TownGateExtender.h" />
+    <ClInclude Include="ObjectExtenders\TrailblazerExtender.h" />
+    <ClInclude Include="ObjectExtenders\UniversityExtender.h" />
+    <ClInclude Include="ObjectExtenders\WarlocksLab.h" />
+    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="ObjectExtenders\ColosseumOfTheMagiExtender.h" />
+    <ClInclude Include="ObjectExtenders\CreatureBanksExtender.h" />
+    <ClInclude Include="ObjectExtenders\GazeboExtender.h" />
+    <ClInclude Include="ObjectExtenders\ShrinesExtender.h" />
+    <ClInclude Include="ObjectExtenders\WarehousesExtender.h" />
+    <ClInclude Include="ObjectExtenders\WateringPlaceExtender.h" />
+    <ClInclude Include="ObjectExtenders\WoGObjectsExtender.h" />
+    <ClInclude Include="ObjectExtender.h" />
+    <ClInclude Include="RMGObjectsEditor.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="RMG_SettingsDlg.h" />
   </ItemGroup>
 </Project>

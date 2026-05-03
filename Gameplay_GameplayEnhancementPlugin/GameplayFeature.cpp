@@ -1,5 +1,4 @@
 #include "GameplayFeature.h"
-
 namespace features
 {
 GameplayFeature::GameplayFeature() : IGamePatch(_PI)
@@ -33,9 +32,8 @@ signed int __stdcall H3HeroDlg_Main(HiHook *h, const int heroId, int hideDelButt
     const H3Hero *hero = &P_Game->heroes[heroId];
 
     const int prevOwner = hero->owner;
-
-    if (hideDelButton && !isRightClick && P_ActivePlayer->ownerID == P_CurrentPlayerID &&
-        prevOwner == P_CurrentPlayerID)
+    const INT8 curPlayer = P_CurrentPlayerID;
+    if (hideDelButton && !isRightClick && P_ActivePlayer->ownerID == curPlayer && prevOwner == curPlayer)
     {
 
         hideDelButton = false;
@@ -49,9 +47,10 @@ signed int __stdcall H3HeroDlg_Main(HiHook *h, const int heroId, int hideDelButt
     //  patch->Destroy();
 
     const int newOwner = hero->owner;
-    if (P_TownMgr && prevOwner != newOwner)
+    auto *townMgr = P_TownMgr->Get();
+
+    if (townMgr && prevOwner != newOwner)
     {
-        auto *townMgr = P_TownMgr->Get();
         if (townMgr->top)
         {
             h3::H3Free(townMgr->top);
@@ -200,20 +199,21 @@ int GameplayFeature::HeroFullMP_Rem = 0;
 // Инициализация оставшихся полных очков перемещения героя.
 _LHF_(LoHook_HeroRoute_InitMaxMP)
 {
-    H3Hero *hero = reinterpret_cast<H3Hero *>(c->ebx);
-    H3Player *player = &P_Game->players[hero->owner];
+    const H3Hero *hero = reinterpret_cast<H3Hero *>(c->ebx);
+    const H3Player *player = &P_Game->players[hero->owner];
 
     // Получаем полные очки перемещения героя.
     GameplayFeature::HeroFullMP_Rem = hero->maxMovement;
 
-    bool v4 = THISCALL_1(bool, 0x4BAA40, P_ActivePlayer->Get());
+    const bool playerIsHere = THISCALL_1(bool, 0x4BAA40, P_ActivePlayer->Get());
 
-    int curDayOfWeek = P_Game->date.day;
+    const int curDayOfWeek = P_Game->date.day;
 
-    char is_human2 = player->is_human;
-    char v7 = P_ActivePlayer->Get()->is_human;
+    const char is_human2 = player->is_human;
+    const char v7 = P_ActivePlayer->Get()->is_human;
+    const INT8 curPlayerId = P_CurrentPlayerID;
 
-    if (v4 || (is_human2 && v7 && v7 > is_human2) || v7 == is_human2 && P_CurrentPlayerID > hero->owner)
+    if (playerIsHere || (is_human2 && v7 && v7 > is_human2) || v7 == is_human2 && curPlayerId > hero->owner)
     {
         if ((hero->flags & 0x1000000) == 0) // cheats
         {
@@ -224,7 +224,7 @@ _LHF_(LoHook_HeroRoute_InitMaxMP)
             }
         }
     }
-    if (!v4)
+    if (!playerIsHere)
     {
         IntAt(c->ebp - 0x4) = 0;
     }
@@ -235,7 +235,7 @@ _LHF_(LoHook_HeroRoute_InitMaxMP)
 _LHF_(LoHook_HeroRoute_ReduceMaxMP)
 {
     // Герой.
-    H3Hero *hero = reinterpret_cast<H3Hero *>(c->ebx);
+    const H3Hero *hero = reinterpret_cast<H3Hero *>(c->ebx);
 
     // Уменьшаем полные очки перемещения героя на шаг.
     GameplayFeature::HeroFullMP_Rem -=

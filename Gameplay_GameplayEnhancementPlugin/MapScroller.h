@@ -1,4 +1,5 @@
 #pragma once
+#include "pch.h"
 
 namespace scroll
 {
@@ -22,11 +23,12 @@ struct Calculator
 class MapScroller : public IGamePatch
 {
 
-	static MapScroller* instance;
+    static MapScroller *instance;
+
   private:
     const RECT scrollLimits;
-    const UINT mapViewW;
-    const UINT mapViewH;
+    const INT mapViewW;
+    const INT mapViewH;
 
     H3Position startMousePosition;
     H3POINT startMousePoint;

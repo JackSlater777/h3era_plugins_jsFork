@@ -1,10 +1,6 @@
-#include <unordered_set>
-
-#include "../pch.h"
-
 #include "UniversityExtender.h"
-namespace university
 
+namespace university
 {
 
 INT8 UniversityExtender::bannedSkillsCopy[limits::SECONDARY_SKILLS];
@@ -27,7 +23,7 @@ H3RmgObjectGenerator *UniversityExtender::CreateRMGObjectGen(const RMGObjectInfo
 
 void UniversityExtender::AfterLoadingObjectsTxtProc(const INT16 *maxSubtypes)
 {
-    const int length = maxSubtypes[eObject::UNIVERSITY];
+    const int length = maxSubtypes[eObject::UNIVERSITY] + 1;
 
     universitiesData.resize(length);
 

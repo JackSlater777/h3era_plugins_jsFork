@@ -3,17 +3,28 @@
 Patcher *globalPatcher = nullptr;
 PatcherInstance *_PI = nullptr;
 
+#define PATCH_DECLATOR(nameSpaceName, className)                                                                       \
+    namespace nameSpaceName                                                                                            \
+    {                                                                                                                  \
+    class className : public IGamePatch                                                                                \
+    {                                                                                                                  \
+      public:                                                                                                          \
+        static className &className::Get();                                                                            \
+    };                                                                                                                 \
+    }
+#define PATCH_GETTER(nameSpaceName, className) &nameSpaceName::className::Get()
+
 namespace dllText
 {
-const char *PLUGIN_VERSION = "1.7.5";
+const char *PLUGIN_VERSION = "1.8.3";
 const char *INSTANCE_NAME = "EraPlugin.GameplayFeatures.daemon_n";
 const char *PLUGIN_AUTHOR = "daemon_n";
 const char *PLUGIN_DATA = __DATE__;
 } // namespace dllText
 
-void __stdcall OnReportVersion(Era::TEvent *e)
+_ERH_(OnReportVersion)
 {
-    sprintf(h3_TextBuffer, "{%s} v%s (%s)", PROJECT_NAME, dllText::PLUGIN_VERSION, __DATE__);
+    libc::sprintf(h3_TextBuffer, "{%s} v%s (%s)", PROJECT_NAME, dllText::PLUGIN_VERSION, __DATE__);
     std::string temp(h3_TextBuffer);
     Era::ReportPluginVersion(temp.c_str());
 }
@@ -55,23 +66,29 @@ void __stdcall H3AdventureMgrDlg__SetButtonsPlayerColor(HiHook *h, H3AdventureMg
     }
 }
 
+PATCH_DECLATOR(scroll, MapScroller)
+PATCH_DECLATOR(graphics, GraphicsEnhancements)
+PATCH_DECLATOR(cmbhints, CombatHints)
+PATCH_DECLATOR(features, GameplayFeature)
+PATCH_DECLATOR(ERI, ExtendedResourcesInfo)
+PATCH_DECLATOR(artifacts, ArtifactHints)
+PATCH_DECLATOR(advMapHints, AdventureMapHints)
+
 _LHF_(HooksInit)
 {
 
-    scroll::MapScroller::Get();
+    PATCH_GETTER(scroll, MapScroller);
+    PATCH_GETTER(graphics, GraphicsEnhancements);
+    PATCH_GETTER(cmbhints, CombatHints);
+    PATCH_GETTER(features, GameplayFeature);
+    PATCH_GETTER(ERI, ExtendedResourcesInfo);
+    PATCH_GETTER(artifacts, ArtifactHints);
 
-    // if (EraJS::readInt("gem_plugin.combat_hints.enable"))
-    graphics::GraphicsEnhancements::Get();
-    cmbhints::CombatHints::Get();
-
-    features::GameplayFeature::Get();
-    ERI::ExtendedResourcesInfo::Get();
     static constexpr LPCSTR vipPluginInstanceName = "EraPlugin.AdventureMapHints.daemon_n";
     if (globalPatcher->GetInstance(vipPluginInstanceName) == nullptr)
     {
-        advMapHints::AdventureMapHints::Init(globalPatcher->CreateInstance(vipPluginInstanceName));
+        PATCH_GETTER(advMapHints, AdventureMapHints);
     }
-    artifacts::ArtifactHints::Get();
 
     _PI->WriteHiHook(0x0403F60, THISCALL_, H3AdventureMgrDlg__SetButtonsPlayerColor);
 
@@ -104,7 +121,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
             pluginIsOn = true;
 
             Era::ConnectEra(hModule, dllText::INSTANCE_NAME);
-            Era::RegisterHandler(OnReportVersion, "OnReportVersion");
+            _REH_(OnReportVersion);
 
             globalPatcher = GetPatcher();
             _PI = globalPatcher->CreateInstance(dllText::INSTANCE_NAME);

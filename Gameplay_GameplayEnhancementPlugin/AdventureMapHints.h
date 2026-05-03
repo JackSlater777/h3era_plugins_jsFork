@@ -1,4 +1,6 @@
 #pragma once
+#include "pch.h"
+
 #include <unordered_set>
 
 namespace advMapHints
@@ -38,6 +40,9 @@ class AdventureMapHints : public IGamePatch
     static constexpr LPCSTR ERM_VARIABLE_FORMAT = "gem_adventure_map_object_hints_option_%d";
 
     static RECT m_mapView;
+    static AdventureMapHints *instance;
+    static constexpr LPCSTR vipPluginInstanceName = "EraPlugin.AdventureMapHints.daemon_n";
+
     // bool m_objectsToDraw[232];
 
     Patch *blockAdventureHintDraw = nullptr;
@@ -61,9 +66,7 @@ class AdventureMapHints : public IGamePatch
                        const int mapZ) noexcept;
 
   public:
-    static AdventureMapHints *instance;
-
-    static void Init(PatcherInstance *pi);
+    static AdventureMapHints &Get();
 
     void CreatePatches() noexcept override;
     // bool * ObjectsToDraw()  noexcept;
@@ -74,9 +77,7 @@ class AdventureMapHints : public IGamePatch
                                                 int screenX, int screenY);
     static void __stdcall AdvMgr_DrawCornerFrames(HiHook *h, const H3AdventureManager *advMan);
 
-    // H3AdventureManager::ProcMapKeyPress - Нажатие кнопки
-    static int __stdcall H3AdventureManager_ProcMapKeyPress(HiHook *h, H3AdventureManager *advMgr, H3Msg *msg, char *a3,
-                                                            H3Position *pos, DWORD a5);
+
     static int __stdcall H3AdventureManager_ProcMapScreen(HiHook *h, H3AdventureManager *advMgr, H3Msg *msg);
     static void __stdcall H3AdventureManager_SetHint(HiHook *h, H3AdventureManager *advMgr, H3MapItem *cell, int x,
                                                      int y);

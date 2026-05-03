@@ -21,7 +21,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
     <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -29,7 +29,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
     <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
@@ -37,12 +37,6 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -57,6 +51,7 @@
     <ClInclude Include="AdditionalProperties.h" />
     <ClInclude Include="ObjectExtenderManager.h" />
     <ClInclude Include="ObjectExtenders\AncientLampExtender.h" />
+    <ClInclude Include="ObjectExtenders\CreatureBankManager.h" />
     <ClInclude Include="ObjectExtenders\DreamTeacherExtender.h" />
     <ClInclude Include="ObjectExtenders\ExtraHints.h" />
     <ClInclude Include="ObjectExtenders\FlagsExtender.h" />
@@ -95,6 +90,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ObjectExtenderManager.cpp" />
     <ClCompile Include="ObjectExtenders\AncientLampExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\CreatureBankManager.cpp" />
     <ClCompile Include="ObjectExtenders\DreamTeacherExtender.cpp" />
     <ClCompile Include="ObjectExtenders\ExtraHints.cpp" />
     <ClCompile Include="ObjectExtenders\FlagsExtender.cpp" />
@@ -127,10 +123,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <OptimizeReferences>true</OptimizeReferences>
@@ -147,5 +145,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <Import Project="Directory.Build.props.user" Condition="Exists('Directory.Build.props.user')" />
 </Project>

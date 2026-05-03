@@ -5259,6 +5259,7 @@ namespace h3
 		UINT32 Size() const;
 		UINT32 Count() const;
 		UINT32 CountMax() const;
+		UINT32 GetIndexOf(const _Elem& item) const;
 		UINT32 RawSize() const;
 		UINT32 RawSizeAllocated() const;
 		VOID RemoveLast();
@@ -5579,6 +5580,11 @@ namespace h3
 	inline UINT32 H3Vector<_Elem>::CountMax() const
 	{
 		return m_capacity - m_first;
+	}
+	template<typename _Elem>
+	inline UINT32 H3Vector<_Elem>::GetIndexOf(const _Elem& item) const
+	{
+		return &item - m_first;
 	}
 	template<typename _Elem>
 	inline UINT32 H3Vector<_Elem>::RawSize() const
@@ -16958,7 +16964,12 @@ namespace h3
 		_H3API_ INT32 GetHeight() const;
 		_H3API_ INT32 GetX() const;
 		_H3API_ INT32 GetY() const;
+		_H3API_ VOID  SetWidth(const INT32 width);
+		_H3API_ VOID  SetHeight(const INT32 height);
+		_H3API_ VOID  SetX(const INT32 x);
+		_H3API_ VOID  SetY(const INT32 y);
 		_H3API_ BOOL  IsTopDialog() const;
+		_H3API_ BOOL  Deactivate(const BOOL deactivate);
 		/**
 		 * @brief Adds the specified state to control id
 		 * @param id Control identifier
@@ -18435,6 +18446,7 @@ namespace h3
 
 		_H3API_ VOID SetPreviousManager(H3Manager* prev);
 		_H3API_ VOID SetNextManager(H3Manager* next);
+		_H3API_ VOID SetManagers(H3Manager* prev, H3Manager* next);
 	};
 	_H3API_ASSERT_SIZE_(H3Manager);
 
@@ -18825,8 +18837,9 @@ namespace h3
 		h3unk8 _f_13D2C[12];
 		/** @brief [132E8] */
 		RECT updateRect;
-		h3unk8 _f_13D48[4];
 	public:
+		/** @brief [13D48] */
+		INT32 winnerSide;
 		/** @brief [13D4C] */
 		INT32 necromancyRaisedAmount;
 		/** @brief [13D50] eCreatures */
@@ -33152,9 +33165,29 @@ namespace h3
 	{
 		return yDlg;
 	}
+	_H3API_ VOID H3BaseDlg::SetWidth(const INT32 width)
+	{
+		widthDlg = width;
+	}
+	_H3API_ VOID H3BaseDlg::SetHeight(const INT32 height)
+	{
+		heightDlg = height;
+	}
+	_H3API_ VOID H3BaseDlg::SetX(const INT32 x)
+	{
+		xDlg = x;
+	}
+	_H3API_ VOID H3BaseDlg::SetY(const INT32 y)
+	{
+		yDlg = y;
+	}
 	_H3API_ BOOL H3BaseDlg::IsTopDialog() const
 	{
 		return nextDialog == nullptr;
+	}
+	_H3API_ BOOL  H3BaseDlg::Deactivate(const BOOL deactivate)
+	{
+		return THISCALL_2(BOOL, 0x05FFB70, this, deactivate);
 	}
 	_H3API_ VOID H3BaseDlg::AddControlState(INT32 id, eControlState state)
 	{
@@ -34572,6 +34605,11 @@ namespace h3
 	}
 	_H3API_ VOID H3Manager::SetNextManager(H3Manager* next)
 	{
+		child = next;
+	}
+	_H3API_ VOID H3Manager::SetManagers(H3Manager* prev, H3Manager* next)
+	{
+		parent = prev;
 		child = next;
 	}
 } /* namespace h3 */

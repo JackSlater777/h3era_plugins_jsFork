@@ -1,18 +1,19 @@
-#include "pch.h"
+#include "AdventureMapHints.h"
 
 namespace advMapHints
 {
 RECT AdventureMapHints::m_mapView;
 
 AdventureMapHints *AdventureMapHints::instance = nullptr;
-void AdventureMapHints::Init(PatcherInstance *pi)
+AdventureMapHints &AdventureMapHints::Get()
 {
     if (!instance)
     {
+        auto pi = globalPatcher->CreateInstance(vipPluginInstanceName);
         instance = new AdventureMapHints(pi);
     }
+    return *instance;
 }
-
 AdventureMapHints::AdventureMapHints(PatcherInstance *pi)
     : IGamePatch(pi), settings("Runtime/gem_AdventureMapHints.ini", "StaticHintsDrawByType")
 
@@ -42,12 +43,8 @@ void AdventureMapHints::CreatePatches() noexcept
             _pi->WriteHiHook(0x040F5D7, THISCALL_, AdvMgr_TileObjectDraw);
         }
 
-        // return;
         // hero movement hint
-
-        // H3AdventureManager::ProcMapKeyPress - Нажатие кнопки
-        //_pi->WriteHiHook(0x408BA0, SPLICE_, EXTENDED_, THISCALL_, H3AdventureManager_ProcMapKeyPress);
-        // H3AdventureManager::ProcMapScreen - Отжатие кнопки
+        // H3AdventureManager::ProcMapScreen - нажатие/отжатие кнопки
         _pi->WriteHiHook(0x408710, SPLICE_, EXTENDED_, THISCALL_, H3AdventureManager_ProcMapScreen);
         // H3AdventureManager::UpdateHintMessage - Перевод мыши на другой тайл
         _pi->WriteHiHook(0x40b0b0, SPLICE_, EXTENDED_, THISCALL_, H3AdventureManager_SetHint);
@@ -194,7 +191,7 @@ _LHF_(AdventureMapHints::AdvMgr_BeforeObjectsDraw)
         if (keyIsHeld)
         {
             instance->playerID = P_Game->Get()->GetPlayerID();
-            sprintf(Era::z[0], ERM_VARIABLE_FORMAT, instance->playerID); // ;
+            libc::sprintf(Era::z[0], ERM_VARIABLE_FORMAT, instance->playerID); // ;
             instance->needDrawHints = Era::GetAssocVarIntValue(Era::z[0]);
         }
     }
@@ -212,7 +209,8 @@ void __stdcall AdventureMapHints::AdvMgr_TileObjectDraw(HiHook *h, H3AdventureMa
     if (instance->needDrawHints)
     {
         // check if tile may have object and visible by user
-        if (mapX >= 0 && mapY >= 0 && mapX < *P_MapSize && mapY < *P_MapSize &&
+        const int mapSize = *P_MapSize;
+        if (mapX >= 0 && mapY >= 0 && mapX < mapSize && mapY < mapSize &&
             H3TileVision::CanViewTile(mapX, mapY, mapZ, instance->playerID))
         {
 
@@ -297,7 +295,7 @@ void __stdcall AdventureMapHints::AdvMgr_TileObjectDraw(HiHook *h, H3AdventureMa
                     //  return;
                     const int frameId = owner >= 0 && owner < 8 ? owner : 8;
 
-                    memset(tempBuffer->buffer, 0, tempBuffer->buffSize);
+                    libc::memset(tempBuffer->buffer, 0, tempBuffer->buffSize);
                     portrait->DrawToPcx16(tempBuffer, 1, 1, 1);
 
                     flagDef->DrawToPcx16(0, frameId, ((flagDef->widthDEF - portrait->width) >> 1) - 1, 4,
@@ -324,7 +322,7 @@ void __stdcall AdventureMapHints::AdvMgr_TileObjectDraw(HiHook *h, H3AdventureMa
 
                     tempBuffer = H3LoadedPcx16::Create(TEMP_PCX_WIDTH, TEMP_PCX_HEIGHT);
 
-                    memset(tempBuffer->buffer, 0, tempBuffer->buffSize);
+                    libc::memset(tempBuffer->buffer, 0, tempBuffer->buffSize);
 
                     fnt->TextDraw(tempBuffer, hintText, TEXT_MARGIN, 0, TEMP_PCX_WIDTH - TEXT_MARGIN, TEMP_PCX_HEIGHT);
                 }
@@ -444,7 +442,7 @@ bool CreateKeyAltHint(H3AdventureManager *advMgr, H3MapItem *cell)
     H3Hero *hero = P_Game->GetHero(currentHero);
 
     // Если навели на героя - ничего не делаем
-    if (H3Position(hero->x, hero->y, hero->z) == mousePosition)
+    if (H3Position(hero->x, hero->y, static_cast<INT8>(hero->z)) == mousePosition)
     {
         return false;
     }
@@ -466,7 +464,8 @@ bool CreateKeyAltHint(H3AdventureManager *advMgr, H3MapItem *cell)
         libc::sprintf(h3_TextBuffer, EraJS::read(KEY_ALT_HINT_CANT_REACH), hero->name);
         return true;
     }
-    // Клетка водная и либо что-то с флагом клетки, либо тип объекта на клетке не лодка, не герой, не кораблекрушение
+    // Клетка водная и либо что-то с флагом клетки, либо тип объекта на клетке не лодка, не герой, не
+    // кораблекрушение
     else if (cell->land == eTerrain::WATER &&
              ((*(WORD *)&cell->mirror & 0x1000) == 0 ||
               objectType != eObject::BOAT && objectType != eObject::HERO && objectType != eObject::SHIPWRECK))
@@ -489,72 +488,31 @@ bool CreateKeyAltHint(H3AdventureManager *advMgr, H3MapItem *cell)
     {
         const int movementLeft = movement - movementCost;
         libc::sprintf(h3_TextBuffer, EraJS::read(KEY_ALT_HINT_ENOUGH_POINTS), hero->name, movementCost, movementLeft);
-        return true;
     }
     else
     {
         libc::sprintf(h3_TextBuffer, EraJS::read(KEY_ALT_HINT_NOT_ENOUGH_POINTS), hero->name, movementCost);
-        return true;
-    }
-}
-
-int __stdcall AdventureMapHints::H3AdventureManager_ProcMapKeyPress(HiHook *h, H3AdventureManager *advMgr, H3Msg *msg,
-                                                                    char *a3, H3Position *pos, DWORD a5)
-{
-    int result = THISCALL_5(int, h->GetDefaultFunc(), advMgr, msg, a3, pos, a5);
-    char focused = advMgr->dlg->screenlogEdit->IsFocused();
-
-    // Если не в чате, нажатие кнопки ALT и клетка подходящая под хинт
-    if (!focused && !instance->altIsPressed && msg->GetKey() == eVKey::H3VK_ALT &&
-        msg->command == eMsgCommand::KEY_DOWN)
-    {
-        instance->altIsPressed = true;
-        advMgr->UpdateHintMessage();
     }
 
-    return result;
+    return true;
 }
 
 int __stdcall AdventureMapHints::H3AdventureManager_ProcMapScreen(HiHook *h, H3AdventureManager *advMgr, H3Msg *msg)
 {
-    char focused = advMgr->dlg->screenlogEdit->IsFocused();
-
     // Если не в чате и отжатие кнопки ALT
-    if (!focused)
+    if (!advMgr->dlg->screenlogEdit->IsFocused())
     {
-
+        instance->altIsPressed = msg->AltPressed();
         if (msg->GetKey() == eVKey::H3VK_ALT)
         {
             switch (msg->command)
             {
             case eMsgCommand::KEY_DOWN:
-                if (!instance->altIsPressed)
-                {
-                    instance->altIsPressed = true;
-
-                    advMgr->UpdateHintMessage();
-                }
-                break;
             case eMsgCommand::KEY_UP:
-                if (instance->altIsPressed)
-                {
-                    instance->altIsPressed = false;
-
-                    advMgr->UpdateHintMessage();
-                }
+                advMgr->UpdateHintMessage();
                 break;
-
             default:
-
                 break;
-            }
-        }
-        else if (instance->altIsPressed)
-        {
-            if (msg->flags & h3::eMsgFlag::ALT)
-            {
-                //  instance->altIsPressed = false;
-                // advMgr->UpdateHintMessage();
             }
         }
     }
@@ -593,10 +551,8 @@ void __stdcall AdventureMapHints::H3AdventureManager_SetHint(HiHook *h, H3Advent
                                                              int x, int y)
 {
 
-    char focused = advMgr->dlg->screenlogEdit->IsFocused();
-    // bool isCustomHint = CreateKeyAltHint(advMgr, cell);
-
-    if (focused || instance->isCustomHintCreation || !instance->altIsPressed || !CreateKeyAltHint(advMgr, cell))
+    if (advMgr->dlg->screenlogEdit->IsFocused() || instance->isCustomHintCreation || !instance->altIsPressed ||
+        !CreateKeyAltHint(advMgr, cell))
     {
         THISCALL_4(void, h->GetDefaultFunc(), advMgr, cell, x, y);
     }
@@ -636,7 +592,7 @@ void AdventureHintsSettings::reset()
 {
     vKey = VK_MENU;
 
-    memset(drawObjectHint, false, sizeof(drawObjectHint));
+    libc::memset(drawObjectHint, false, sizeof(drawObjectHint));
 
     drawObjectHint[eObject::HERO].yOffset = 38;
     drawObjectHint[eObject::ARTIFACT].yOffset = 16;
