@@ -36,6 +36,7 @@
     <ClCompile Include="ObjectExtenders\WoGObjectsExtender.cpp" />
     <ClCompile Include="RMGObjectsEditor.cpp" />
     <ClCompile Include="RMG_SettingsDlg.cpp" />
+    <ClCompile Include="ObjectExtenders\HdModPatches.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdditionalProperties.h" />
@@ -72,5 +73,6 @@
     <ClInclude Include="RMGObjectsEditor.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RMG_SettingsDlg.h" />
+    <ClInclude Include="ObjectExtenders\HdModPatches.h" />
   </ItemGroup>
 </Project>

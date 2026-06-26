@@ -193,6 +193,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
             FlagsExtender_Init();
             // Extra hints
             ExtraHints();
+            // HD-mod patches
+            //HdModPatches();
         }
         break;
     }

@@ -94,7 +94,7 @@ void ShowMessage(const H3MapItem *mapItem, const bool isVisitedByHero)
         objName.Append(EraJS::read(
             H3String::Format("RMG.objectGeneration.%d.%d.text.visit", mapItem->objectType, mapItem->objectSubtype)
                 .String()));
-        H3PictureCategories pics(ePictureCategories::POSITIVE_LUCK, -1);
+        H3PictureCategories pics(ePictureCategories::POSITIVE_LUCK, LUCK_GIVEN);
 
         if (skipMapMessage)
         {

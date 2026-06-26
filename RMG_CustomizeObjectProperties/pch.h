@@ -33,6 +33,7 @@ constexpr UINT16 H3_MAX_OBJECTS = h3::limits::OBJECTS;
 #include "ObjectExtenders/H3MapItemNew.h"
 #include "ObjectExtenders/ExtraHints.h"
 #include "ObjectExtenders/FlagsExtender.h"
+#include "ObjectExtenders/HdModPatches.h"
 
 // 1. Place all the obj props into mod/data/objects/*.txt and parse all the mods
 

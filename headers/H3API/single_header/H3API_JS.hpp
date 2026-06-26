@@ -15441,6 +15441,47 @@ namespace h3
 
 namespace h3
 {
+#pragma pack(push, 1)
+
+	struct H3Dlg8Item
+	{
+		_H3API_SIZE_(0x4C); // 0x4C
+
+		/** @brief [00]*/
+		ePictureCategories picType;
+		/** @brief [04]*/
+		INT32 picSubType;
+		/** @brief [08]*/
+		H3String text;
+		/** @brief [18]*/
+		H3String message;
+		/** @brief [28]*/
+		INT32 defIndex;
+		/** @brief [2C]*/
+		INT32 field_2C;
+		/** @brief [30]*/
+		INT32 field_30;
+		/** @brief [34]*/
+		INT32 picFrameHeight;
+		/** @brief [38]*/
+		INT32 picFrameWidth;
+		/** @brief [3C]*/
+		INT32 field_3C;
+		/** @brief [40]*/
+		INT32 field_40;
+		/** @brief [44]*/
+		INT32  field_44;
+		/** @brief [48]*/
+		INT32  fullWidth;
+	};
+	_H3API_ASSERT_SIZE_(H3Dlg8Item);
+
+#pragma pack(pop)
+
+} /* namespace h3 */
+
+namespace h3
+{
 	_H3API_DECLARE_(VictoryCondition);
 
 #pragma pack(push, 4)
