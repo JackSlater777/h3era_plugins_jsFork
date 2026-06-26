@@ -16300,23 +16300,18 @@ namespace h3
 		BOOL8 human;
 		h3unk8 _f_E7;
 		/** @brief [E8] */
-		BOOL hasComboArtifacts;
+		DWORD comboArtifacts;
+		/** @brief [EC] */
+		struct AIPlayer
+		{
+			H3Resources resourceExpectedCount;
+			H3Resources income;
+			char gap38[4];
+			DOUBLE resourceImportance[7];
+			INT32 averageResourceValue;
+			float turnValueOfAvgArtifact;
+		} aIPlayer;
 
-		///////////////////// AI //////////////////////
-		/** @brief [EC] */ // 
-		INT32 resourceCount[7];
-		/** @brief [108] */
-		H3Resources income;
-	protected:
-		h3unk8 _f_124[4];
-	public:
-		/** @brief [128] */
-		DOUBLE resourceImportance[7];
-		/** @brief [160] */
-		INT32 averageResourceValue;
-		/** @brief [164] */
-		FLOAT turnValueOfAvgArtifact;
-		///////////////////////////////////////////////
 	public:
 		_H3API_ H3Hero* GetActiveHero();
 	};

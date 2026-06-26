@@ -19,12 +19,12 @@ BOOL GraveExtender::SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *hero, const H
 {
     if (GetFromMapItem(mapItem))
     {
-        aiMapItemWeight = static_cast<int>(player->resourceImportance[eResource::GOLD] * 2750.0);
+        aiMapItemWeight = static_cast<int>(player->aIPlayer.resourceImportance[eResource::GOLD] * 2750.0);
         
         // H3Hero::CountArtifactsInBackpack
         if (THISCALL_2(int, 0x4D9330, hero, 1) < 64)
         {
-            aiMapItemWeight += static_cast<int>(player->turnValueOfAvgArtifact);
+            aiMapItemWeight += static_cast<int>(player->aIPlayer.turnValueOfAvgArtifact);
         }
             
         int movement = hero->movement;

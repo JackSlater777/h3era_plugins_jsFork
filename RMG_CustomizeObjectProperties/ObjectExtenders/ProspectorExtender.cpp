@@ -29,7 +29,7 @@ BOOL ProspectorExtender::SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *hero, co
             UINT16 resType = objSetup->resourceType;
 
             aiMapItemWeight =
-                static_cast<int>(player->resourceImportance[resType] * resNum); // static_cast<double*>()
+                static_cast<int>(player->aIPlayer.resourceImportance[resType] * resNum); // static_cast<double*>()
         }
         return true;
     }
