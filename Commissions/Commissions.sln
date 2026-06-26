@@ -30,6 +30,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test_BaseCommissionPlugin",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utils_CombatEmulator", "Utils_CombatEmulator\Utils_CombatEmulator.vcxproj", "{E7F8A9B0-C1D2-43E5-6F7A-8B9C0D1E2F3A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Objects_DynamicHeroTeleport", "Objects_DynamicHeroTeleport\Objects_DynamicHeroTeleport.vcxproj", "{10203040-5060-4708-90A0-B1C2D3E4F5A6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RMG_ZoneTerrainRules", "RMG_ZoneTerrainRules\RMG_ZoneTerrainRules.vcxproj", "{383D8FF3-688D-4D25-A334-31C5B2D2C1CC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graphics_MainMenuVideoPositioning", "Graphics_MainMenuVideoPositioning\Graphics_MainMenuVideoPositioning.vcxproj", "{A8B9C0D1-E2F3-4567-89A0-B1C2D3E4F5A6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graphics_DrawAdventureMapTileEffects", "Graphics_DrawAdventureMapTileEffects\\Graphics_DrawAdventureMapTileEffects.vcxproj", "{D1E2F3A4-B5C6-4789-90D1-E2F3A4B5C6D7}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SecondarySkills_EditNecromancyValues", "SecondarySkills_EditNecromancyValues\SecondarySkills_EditNecromancyValues.vcxproj", "{A9B8C7D6-E5F4-4321-9A8B-0C1D2E3F4A5B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Heroes_SetUniqueCombatGraphics", "Heroes_SetUniqueCombatGraphics\Heroes_SetUniqueCombatGraphics.vcxproj", "{B2C3D4E5-F6A7-48B9-9C0D-2345678901DE}"
@@ -41,6 +49,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Artifacts_ShimyCombatStatsPenalties", "Artifacts_ShimyCombatStatsPenalties\Artifacts_ShimyCombatStatsPenalties.vcxproj", "{D4E5F6A7-B8C9-49CA-9D0E-4567890123EF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Combat_StatusSpellCumulativeEffect", "Combat_StatusSpellCumulativeEffect\Combat_StatusSpellCumulativeEffect.vcxproj", "{E5F6A7B8-C9D0-49CB-9D0E-5678901234EF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Combat_CasterCreatureSpellSelector", "Combat_CasterCreatureSpellSelector\Combat_CasterCreatureSpellSelector.vcxproj", "{F2A3B4C5-D6E7-4890-91A2-B3C4D5E6F7A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,6 +114,22 @@ Global
 		{E7F8A9B0-C1D2-43E5-6F7A-8B9C0D1E2F3A}.Debug|x86.Build.0 = Debug|Win32
 		{E7F8A9B0-C1D2-43E5-6F7A-8B9C0D1E2F3A}.Release|x86.ActiveCfg = Release|Win32
 		{E7F8A9B0-C1D2-43E5-6F7A-8B9C0D1E2F3A}.Release|x86.Build.0 = Release|Win32
+		{10203040-5060-4708-90A0-B1C2D3E4F5A6}.Debug|x86.ActiveCfg = Debug|Win32
+		{10203040-5060-4708-90A0-B1C2D3E4F5A6}.Debug|x86.Build.0 = Debug|Win32
+		{10203040-5060-4708-90A0-B1C2D3E4F5A6}.Release|x86.ActiveCfg = Release|Win32
+		{10203040-5060-4708-90A0-B1C2D3E4F5A6}.Release|x86.Build.0 = Release|Win32
+		{383D8FF3-688D-4D25-A334-31C5B2D2C1CC}.Debug|x86.ActiveCfg = Debug|Win32
+		{383D8FF3-688D-4D25-A334-31C5B2D2C1CC}.Debug|x86.Build.0 = Debug|Win32
+		{383D8FF3-688D-4D25-A334-31C5B2D2C1CC}.Release|x86.ActiveCfg = Release|Win32
+		{383D8FF3-688D-4D25-A334-31C5B2D2C1CC}.Release|x86.Build.0 = Release|Win32
+		{A8B9C0D1-E2F3-4567-89A0-B1C2D3E4F5A6}.Debug|x86.ActiveCfg = Debug|Win32
+		{A8B9C0D1-E2F3-4567-89A0-B1C2D3E4F5A6}.Debug|x86.Build.0 = Debug|Win32
+		{A8B9C0D1-E2F3-4567-89A0-B1C2D3E4F5A6}.Release|x86.ActiveCfg = Release|Win32
+		{A8B9C0D1-E2F3-4567-89A0-B1C2D3E4F5A6}.Release|x86.Build.0 = Release|Win32
+		{D1E2F3A4-B5C6-4789-90D1-E2F3A4B5C6D7}.Debug|x86.ActiveCfg = Debug|Win32
+		{D1E2F3A4-B5C6-4789-90D1-E2F3A4B5C6D7}.Debug|x86.Build.0 = Debug|Win32
+		{D1E2F3A4-B5C6-4789-90D1-E2F3A4B5C6D7}.Release|x86.ActiveCfg = Release|Win32
+		{D1E2F3A4-B5C6-4789-90D1-E2F3A4B5C6D7}.Release|x86.Build.0 = Release|Win32
 		{A9B8C7D6-E5F4-4321-9A8B-0C1D2E3F4A5B}.Debug|x86.ActiveCfg = Debug|Win32
 		{A9B8C7D6-E5F4-4321-9A8B-0C1D2E3F4A5B}.Debug|x86.Build.0 = Debug|Win32
 		{A9B8C7D6-E5F4-4321-9A8B-0C1D2E3F4A5B}.Release|x86.ActiveCfg = Release|Win32
@@ -128,6 +154,10 @@ Global
 		{E5F6A7B8-C9D0-49CB-9D0E-5678901234EF}.Debug|x86.Build.0 = Debug|Win32
 		{E5F6A7B8-C9D0-49CB-9D0E-5678901234EF}.Release|x86.ActiveCfg = Release|Win32
 		{E5F6A7B8-C9D0-49CB-9D0E-5678901234EF}.Release|x86.Build.0 = Release|Win32
+		{F2A3B4C5-D6E7-4890-91A2-B3C4D5E6F7A8}.Debug|x86.ActiveCfg = Debug|Win32
+		{F2A3B4C5-D6E7-4890-91A2-B3C4D5E6F7A8}.Debug|x86.Build.0 = Debug|Win32
+		{F2A3B4C5-D6E7-4890-91A2-B3C4D5E6F7A8}.Release|x86.ActiveCfg = Release|Win32
+		{F2A3B4C5-D6E7-4890-91A2-B3C4D5E6F7A8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

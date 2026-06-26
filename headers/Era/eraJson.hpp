@@ -3,10 +3,12 @@
 
 namespace EraJS
 {
-#ifndef ERA4
+#ifdef ERA2 // old ERA which didn't clear memory
 #define TR _tr
-#else
+#elif !defined(ERA_MAPED)
 #define TR Era::tr
+#else
+#define TR Eramap::tr
 #endif
 
 inline Era::static_str _tr(const char *key)

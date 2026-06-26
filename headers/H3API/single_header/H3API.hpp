@@ -4926,6 +4926,38 @@ namespace h3
         }
         typedef NSlots::eArtifactSlots eArtifactSlots;
 
+		namespace NPositions
+        {
+            enum eArtifactPositions
+            {
+                NONE           = 0,
+                BACKPACK       = NONE,
+                HEAD           = 1,
+                SHOULDERS      = 2,
+                NECK           = 3,
+                RIGHT_HAND     = 4,
+                LEFT_HAND      = 5,
+                TORSO          = 6,
+				ANY_RING       = 7,
+                FEET           = 8,
+                ANY_MISC       = 9,
+                BALLISTA       = 10,
+                AMMO_CART      = 11,
+                FIRST_AID_TENT = 12,
+                CATAPULT       = 13,
+                SPELLBOOK      = 14,
+				LEFT_RING      = 65,
+				MISC1          = 1334,
+				RIGHT_RING     = 1339,
+				ANY_HAND       = 16771,
+				MISC2          = 21732,
+				MISC3          = 117033,
+				MISC4          = 35338,
+                MISC5          = 21748,
+            };
+        }
+        typedef NPositions::eArtifactPositions eArtifactPositions;
+
         namespace NType
         {
             enum eArtifactType
@@ -4964,6 +4996,7 @@ namespace h3
 
     typedef NH3Artifacts::eArtifacts            eArtifact;
     typedef NH3Artifacts::eArtifactSlots        eArtifactSlots;
+	typedef NH3Artifacts::eArtifactPositions	eArtifactPositions;
     typedef NH3Artifacts::eArtifactType         eArtifactType;
     typedef NH3Artifacts::eCombinationArtifacts eCombinationArtifacts;
 
@@ -8620,10 +8653,10 @@ namespace h3
         _H3API_ eCombinationArtifacts  GetCombinationArtifact() const;
         _H3API_ eArtifact              GetId() const;
         _H3API_ eCombinationArtifacts  GetCombinationArtifactIndex() const;
-        _H3API_ eArtifactSlots         GetSlot() const;
+        _H3API_ eArtifactPositions     GetPosition() const;
         _H3API_ eArtifactType          GetType() const;
         _H3API_ const H3ArtifactSetup& GetSetup() const;
-        _H3API_ eSpell                 GetSpell() const;
+        _H3API_ BOOL8                  HasSpell() const;
         _H3API_ H3Artifact             Remove();
         _H3API_ eSpell                 ScrollSpell() const;
         _H3API_ VOID                   Swap(H3Artifact& other);
@@ -8661,19 +8694,19 @@ namespace h3
         /** @brief [4] gold cost*/
         INT32 cost = 0;
         /** @brief [8]*/
-        eArtifactSlots position = eArtifactSlots::NONE;
+		eArtifactPositions position = eArtifactPositions::NONE;
         /** @brief [C]*/
         eArtifactType type = eArtifactType(0);
         /** @brief [10]*/
         LPCSTR description = h3_NullString;
         /** @brief [14] index of the combo 0..11*/
-        eCombinationArtifacts comboID = eCombinationArtifacts::NONE;
+        eCombinationArtifacts comboArtifactId = eCombinationArtifacts::NONE;
         /** @brief [18] index of the artifact 0..143*/
-		eCombinationArtifacts combinationArtifactId = eCombinationArtifacts::NONE;
+		eCombinationArtifacts partOfComboArtifactId = eCombinationArtifacts::NONE;
         /** @brief [1C] artifact is not available*/
         BOOL8 disabled = TRUE;
-        /** @brief [1D] spell added to spellbook*/
-        eSpell  newSpell = eSpell::SUMMON_BOAT;
+        /** @brief [1D] adds some spells to spellbook*/
+		BOOL8 hasSpell = FALSE;
 
         _H3API_ BOOL IsPartOfCombo() const;
     };
@@ -9933,9 +9966,10 @@ namespace h3
             {
                 SILVER      = 0x00,
                 REGULAR     = 0x01,
-                HIGHLIGHT   = 0x02,
+                HIGHLIGHT_   = 0x02,
                 GOLD        = 0x03,
                 WHITE       = 0x04,
+                HIGHLIGHT   = 0x07,
                 GREEN       = 0x0D,
                 LIGHT_GREEN = 0x0E,
                 DARK_GREEN  = 0x0F,
@@ -9974,8 +10008,8 @@ namespace h3
             LPCSTR const ARTIFACT_DEF     = (LPCSTR(0x660214));  // "artifact.def" 44x44
             LPCSTR const ARTS_ICON        = (LPCSTR(0x683178));  // AltArt.def 64x32
             LPCSTR const CREATURE_SMALL   = (LPCSTR(0x660180));  // "CPRSMALL.def" 32x32
-            LPCSTR const DIBOXBACK        = (LPCSTR(0x66025C));  // "diboxback.pcx" 256x256
-            LPCSTR const DLGBOX           = (LPCSTR(0x66024C));  // "dialogbox.def" 64x64
+            LPCSTR const DIBOXBACK        = (LPCSTR(0x66025C));  // "diboxbck.pcx" 256x256
+            LPCSTR const DLGBOX           = (LPCSTR(0x66024C));  // "dialgbox.def" 64x64
             LPCSTR const HERO_CADRE       = (LPCSTR(0x65F3DC));  // hpsyyy.pcx 48x32
             LPCSTR const PSKILL_42        = (LPCSTR(0x679D9C));  // "PSKIL42.def" 42x42
             LPCSTR const RESOURCE_DEF     = (LPCSTR(0x660224));  // "resource.def" 32x32
@@ -10992,7 +11026,7 @@ namespace h3
                 LOAD_GAME        = 1000,
                 TEXT_MSG         = 1004,
                 BATTLE_INFO      = 1005,
-                PLAYER_E4        = 1009,
+                PLAYER_QUICK     = 1009,
                 DROP_GAME        = 1014,
                 UNK1015          = 1015,
                 END_TURN         = 1016,
@@ -15712,28 +15746,23 @@ namespace h3
 		CHAR player_name[21];
 	public:
 		/** @brief [E1] */
-		BOOL8 is_human;
+		BOOL8 isLocal;
 		/** @brief [E2] */
-		BOOL8 is_human2;
+		BOOL8 isHuman;
+		/** @brief [E4] */
+		BOOL quickCombatEnabled;
+		struct AIPlayer
+		{
+			H3Resources resource_expected_count;
+			H3Resources income;
+			DOUBLE _f_038;
+			DOUBLE resourceImportance[7];
+			float turnValueOfAvgArtifact;
+		};
+		AIPlayer aIPlayer;
 	protected:
-		h3unk8 _f_E3[3];
-		/** @brief [E6] */
-		BOOL8 human;
-		h3unk8 _f_E7;
-		/** @brief [E8] */
-		BOOL hasComboArtifacts;
-		h3unk8 _f_EC[28];
-	public:
-		/** @brief [108] */
-		H3Resources income;
-	protected:
-		h3unk8 _f_124[4];
-	public:
-		/** @brief [128] */
-		DOUBLE resourceImportance[7];
-	protected:
-
-		h3unk8 _f_160[8];
+		/** @brief [164] */
+		h3unk8 _f_164[4];
 	public:
 		_H3API_ H3Hero* GetActiveHero();
 	};
@@ -16090,7 +16119,7 @@ namespace h3
 		 * @param compress_data Whether the data should be compressed before sending it over
 		 * @param size You can specify whether you want to send fewer bytes than the full size, -1 sends full size
 		 */
-		_H3API_ VOID SendData(BOOL compress_data, INT32 size = -1);
+		_H3API_ INT32 SendData(BOOL compress_data, INT32 size = -1);
 	};
 
 #pragma pack(pop) /* align-4 */
@@ -16102,7 +16131,7 @@ namespace h3
 	}
 
 	template<typename T>
-	_H3API_ VOID h3::H3NetworkData<T>::SendData(BOOL compress_data, INT32 size /*= -1*/)
+	_H3API_ INT32 h3::H3NetworkData<T>::SendData(BOOL compress_data, INT32 size /*= -1*/)
 	{
 		if (size != -1)
 			bufferSize = size;
@@ -17373,6 +17402,7 @@ namespace h3
 		INT32 exitSubtype;
 		/** @ brief [58]*/
 		INT32 resultItemId;
+	public:
 		/** @ brief [5C]*/
 		BOOL8 networkGame;
 	public:
@@ -18165,21 +18195,21 @@ namespace h3
 		/** @brief [037E]*/
 		BOOL8                      rmgSettingsShown;
 		/** @brief [037F]*/
-		h3unk8                     _f_37F;
+		BOOL8                      randomMapGeneration;
 		/** @brief [0380]*/
-		H3DlgEdit*                 edit380;
+		H3DlgEdit*				   saveGameEdit;
 		/** @brief [0384]*/
 		h3unk32                    _f_384;
 		/** @brief [0388]*/
-		h3unk32                    _f_388;
+		DWORD*                     pNewPlayerUpdateMan;
 		/** @brief [038C]*/
 		H3ScenarioMapInformation   mapInfo;
 		/** @brief [1030]*/
-		H3Vector<H3ScenarioMapInformation> vector1030;
+		H3Vector<H3ScenarioMapInformation> mapsList;
 		/** @brief [1040]*/
-		H3Vector<H3ScenarioMapInformation> vector1040;
+		H3Vector<H3ScenarioMapInformation> randomMapsList;
 		/** @brief [1050]*/
-		H3Vector<H3ScenarioMapInformation> mapsInformation;
+		H3Vector<H3ScenarioMapInformation> currentMapsList;
 		/** @brief [1060]*/
 		H3ScenarioMapInformation*  mapsInfoPtr;
 		/** @brief [1064]*/
@@ -19292,22 +19322,35 @@ namespace h3
 
 	struct H3SoundManager : public H3Manager
 	{
-		_H3API_SIZE_(0xD4);
+		_H3API_SIZE_(0xD8);
 		_H3API_VTABLE_(0x63FE68);
 		_H3API_GET_INFO_(0x699414, H3SoundManager);
 
 	protected:
 		/** @brief [38]*/
 		UINT32 mssHandle;
+	public:
 		/** @brief [3C]*/
-		HANDLE hSamples[16];
-		h3unk8 _f_80;
+		DWORD driver;
+	protected:
+		/** @brief [40]*/
+		HANDLE hSamples[15];
+		/** @brief [7C]*/
+		INT32 sampleNum;
+		/** @brief [80]*/
+		INT32 currentTerrainMusic;
+	public:
 		/** @brief [84]*/
-		INT32 clickSoundVar;
-		h3unk32 _f_88;
-		h3unk8 _f_8C;
+		BOOL32 clickSoundVar;
+	protected:
+		/** @brief [88]*/
+		BOOL32 bChangeSounds;
+		/** @brief [8C]*/
+		BOOL32 MP3Playing;
 		/** @brief [A0]*/
-		_RTL_CRITICAL_SECTION rtlSection[3];
+		_RTL_CRITICAL_SECTION section_sound_call;
+		_RTL_CRITICAL_SECTION section_MP3_change;
+		_RTL_CRITICAL_SECTION section_MP3_name_change;
 	public:
 		_H3API_ VOID ClickSound(); // modeled after sub_00456540
 		_H3API_ VOID Play(H3WavFile* wav);
@@ -20289,6 +20332,7 @@ namespace h3
 		_H3API_ BOOL TranslateUnprocessedMessage(H3Msg& msg);
 
 	public:
+		_H3API_ H3DlgItem* Destroy(BOOL8 deallocate = TRUE);
 		_H3API_ VOID       EnableItem(BOOL enable);
 		_H3API_ VOID       Enable();
 		_H3API_ VOID       Disable();
@@ -20296,6 +20340,7 @@ namespace h3
 		_H3API_ INT16      GetY() const;
 		_H3API_ INT32      GetAbsoluteX() const;
 		_H3API_ INT32      GetAbsoluteY() const;
+		_H3API_ BOOL       IsPressed() const;
 		_H3API_ BOOL       IsEnabled() const;
 		_H3API_ BOOL       IsActive() const;
 		_H3API_ VOID       SetX(UINT16 x);
@@ -20321,11 +20366,12 @@ namespace h3
 		_H3API_ LPCSTR     GetHint() const;
 		_H3API_ LPCSTR     GetRightClickHint() const;
 		_H3API_ VOID       SetHint(LPCSTR msg);
+		_H3API_ VOID       SetRightClickHint(LPCSTR msg);
+		_H3API_ VOID       SetHints(LPCSTR shortTipText, LPCSTR rightClickHint, BOOL allocateMemory);
 		_H3API_ UINT16     GetID() const;
 		_H3API_ VOID       ParentRedraw(); // redraw through parent
 		_H3API_ VOID       ColorToPlayer(INT8 player);
 		_H3API_ VOID       SendCommand(INT32 command, INT32 parameter);
-		_H3API_ VOID       SetHints(LPCSTR shortTipText, LPCSTR rightClickHint, BOOL allocateMemory);
 		_H3API_ VOID       DrawTempFrame(INT thickness, BYTE r, BYTE g, BYTE b) const;
 		_H3API_ VOID       DrawTempFrame(INT thickness, const H3RGB888& color) const;
 
@@ -21692,7 +21738,7 @@ namespace h3
         INT32                          gameVersion;            /**< @brief [08]*/
         H3RmgMap                        map;                    /**< @brief [0C]*/
         H3Vector<H3RmgObjectProperties>      objectsTxt;             /**< @brief [24] all of the the object properties*/
-        H3Vector<H3RmgObjectProperties**>    objectPrototypes[232];  /**< @brief [34] object properties classified by type*/
+        H3Vector<H3RmgObjectPropsRef*>    objectPrototypes[232];  /**< @brief [34] object properties classified by type*/
         H3Vector<h3unk*>               _f_0EB4;                /**< @brief [EB4]*/
         H3Vector<H3RmgObject*>          positions;              /**< @brief [EC4]*/
         h3unk32                        progress;               /**< @brief [ED4]*/
@@ -28249,7 +28295,7 @@ namespace h3
 
     _H3API_ eCombinationArtifacts H3Artifact::GetCombinationArtifact() const
     {
-        return GetSetup().combinationArtifactId;
+        return GetSetup().partOfComboArtifactId;
     }
 
     _H3API_ eArtifact H3Artifact::GetId() const
@@ -28259,10 +28305,10 @@ namespace h3
 
     _H3API_ eCombinationArtifacts H3Artifact::GetCombinationArtifactIndex() const
     {
-        return GetSetup().comboID;
+        return GetSetup().comboArtifactId;
     }
 
-    _H3API_ eArtifactSlots H3Artifact::GetSlot() const
+    _H3API_ eArtifactPositions H3Artifact::GetPosition() const
     {
         return GetSetup().position;
     }
@@ -28277,9 +28323,9 @@ namespace h3
         return H3ArtifactSetup::Get()[id];
     }
 
-    _H3API_ eSpell H3Artifact::GetSpell() const
+    _H3API_ BOOL8 H3Artifact::HasSpell() const
     {
-        return GetSetup().newSpell;
+        return GetSetup().hasSpell;
     }
 
     _H3API_ eSpell H3Artifact::ScrollSpell() const
@@ -28301,7 +28347,7 @@ namespace h3
 {
 	_H3API_ BOOL H3ArtifactSetup::IsPartOfCombo() const
 	{
-		return combinationArtifactId != eArtifact::NONE;
+		return partOfComboArtifactId != eArtifact::NONE;
 	}
 } /* namespace h3 */
 
@@ -31678,7 +31724,7 @@ namespace h3
         int _h = std::min(h, height - _y);
 
         LightenArea(_x, _y, _w, 1, 50);
-        LightenArea(_x, _y + 1, 1, _y + _h - 2, 50);
+        LightenArea(_x, _y + 1, 1, _h - 2, 50);
         DarkenArea(_x + 1, _y + _h - 1, _w - 1, 1, 50);
         DarkenArea(_x + _w, _y + 1, 1, _h - 2, 50);
     }
@@ -32674,10 +32720,10 @@ namespace h3
 
 		H3ArtifactSetup* art_setups = H3ArtifactSetup::Get();
 
-		INT32 comboId = art_setups[artId].comboID;
+		INT32 comboId = art_setups[artId].comboArtifactId;
 		if (comboId != -1) // it's already a combination artifact
 			return FALSE;
-		comboId = art_setups[artId].combinationArtifactId;
+		comboId = art_setups[artId].partOfComboArtifactId;
 		if (comboId == -1) // not part of a combination
 			return FALSE;
 
@@ -32685,7 +32731,7 @@ namespace h3
 
 		for (INT32 i = 0; i < numArts; ++i)
 		{
-			if (art_setups[i].combinationArtifactId == comboId)
+			if (art_setups[i].partOfComboArtifactId == comboId)
 			{
 				if (!WearsArtifact(i))
 					return FALSE;
@@ -32700,14 +32746,14 @@ namespace h3
 		if (artId == -1)
 			return;
 		H3ArtifactSetup* art_setups = H3ArtifactSetup::Get();
-		INT32 comboId = art_setups[artId].comboID;
+		INT32 comboId = art_setups[artId].comboArtifactId;
 		if (comboId == -1) // not a combo artifact
 			return;
 		RemoveArtifact(slot);
 		INT32 numArts = H3ArtifactCount::Get();
 		for (INT32 i = 0; i < numArts; ++i)
 		{
-			if (art_setups[i].combinationArtifactId == comboId)
+			if (art_setups[i].partOfComboArtifactId == comboId)
 			{
 				H3Artifact art(i, -1);
 				GiveArtifact(art);
@@ -34543,7 +34589,7 @@ namespace h3
 {
 	_H3API_ H3ScenarioMapInformation& H3SelectScenarioDialog::CurrentMap()
 	{
-		return mapsInformation[selectedMapIndex];
+		return currentMapsList[selectedMapIndex];
 	}
 	_H3API_ VOID H3SelectScenarioDialog::UpdateForSelectedScenario(INT32 index, BOOL8 redraw)
 	{
@@ -35054,7 +35100,8 @@ namespace h3
 {
 	_H3API_ VOID H3SoundManager::ClickSound()
 	{
-		INT32 backup = clickSoundVar;
+		BOOL32 backup = clickSoundVar;
+		clickSoundVar = 1;
 		H3WavFile* button_wav = H3ButtonWav::Get();
 		button_wav->spinCount = 64;
 		button_wav->debugInfo = PRTL_CRITICAL_SECTION_DEBUG(1);
@@ -35195,6 +35242,11 @@ namespace h3
         return FALSE;
     }
 
+    _H3API_ H3DlgItem* H3DlgItem::Destroy(BOOL8 deallocate)
+    {
+        vDestroy(deallocate);
+        return this;
+    }
     _H3API_ VOID H3DlgItem::EnableItem(BOOL enable)
     {
         vEnable(enable);
@@ -35223,6 +35275,10 @@ namespace h3
     {
         return yPos + parent->GetY();
     }
+    _H3API_ BOOL H3DlgItem::IsPressed() const
+    {
+		return state & eControlState::PRESSED;
+	}
     _H3API_ BOOL H3DlgItem::IsEnabled() const
     {
         return !(state & 0x20);
@@ -35326,6 +35382,10 @@ namespace h3
     _H3API_ VOID H3DlgItem::SetHint(LPCSTR msg)
     {
         hint = msg;
+    }
+    _H3API_ VOID H3DlgItem::SetRightClickHint(LPCSTR msg)
+    {
+        rightClickHint = msg;
     }
     _H3API_ UINT16 H3DlgItem::GetID() const
     {

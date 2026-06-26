@@ -202,7 +202,7 @@ void GraphicsEnhancements::InitAdventureMapTownBuiltDefs() noexcept
         const INT16 yBase = firstDef->GetY();
         auto &advMapDlg = builtDefButtons.advMapDlg;
 
-        for (INT16 i = 0; i < hdModMax; i++)
+        for (INT16 i = 0; i < maxTownsDisplayableBuiltIcons; i++)
         {
             H3String buttonName = H3String::Format(GraphicsEnhancements::BUILD_BUTTON_NAME_FORMAT_MAP, i);
             const int buttonId = Era::GetButtonID(buttonName.String());
@@ -328,7 +328,7 @@ void __stdcall H3AdventureMgrDlg__RedrawHeroSlots(HiHook *h, H3AdventureMgrDlg *
 {
     THISCALL_4(void, h->GetDefaultFunc(), dlg, playrId, updateDlg, redrawScreen);
 
-    if (P_Game->GetPlayer()->is_human2)
+    if (P_Game->GetPlayer()->isHuman)
         GraphicsEnhancements::Get().DrawAdventureMapTownBuiltStatus(dlg, updateDlg, redrawScreen);
 }
 

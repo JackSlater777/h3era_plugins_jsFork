@@ -27,7 +27,7 @@ using namespace h3;
 
 namespace dllText
 {
-constexpr const char *PLUGIN_VERSION = "1.5.2_js";
+constexpr const char *PLUGIN_VERSION = "1.5.3";
 constexpr const char *PLUGIN_AUTHOR = "daemon_n";
 constexpr const char *INSTANCE_NAME = "EraPlugin." PROJECT_NAME ".daemon_n";
 // const char* PROJECT_NAME = "$(ProjectName)";
@@ -117,9 +117,9 @@ _LHF_(CrBanksTxt_BeforeLoad)
     {
         extender::ObjectExtender *extendersList[] = {
             OBJECT_EXTENDER_GETTER(ColosseumOfTheMagiExtender, colosseumOfTheMagi),
-            OBJECT_EXTENDER_GETTER(CreatureBanksExtender, cbanks), 
+            OBJECT_EXTENDER_GETTER(CreatureBanksExtender, cbanks),
             OBJECT_EXTENDER_GETTER(GazeboExtender, gazebo),
-            OBJECT_EXTENDER_GETTER(ShrinesExtender, shrines), 
+            OBJECT_EXTENDER_GETTER(ShrinesExtender, shrines),
             OBJECT_EXTENDER_GETTER(SpellMarketExtender, spellMarket),
             OBJECT_EXTENDER_GETTER(UniversityExtender, university),
             OBJECT_EXTENDER_GETTER(WarehousesExtender, warehouses),

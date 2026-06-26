@@ -16,7 +16,7 @@ PatcherInstance *_PI = nullptr;
 
 namespace dllText
 {
-const char *PLUGIN_VERSION = "1.8.3";
+const char *PLUGIN_VERSION = "1.9.0";
 const char *INSTANCE_NAME = "EraPlugin.GameplayFeatures.daemon_n";
 const char *PLUGIN_AUTHOR = "daemon_n";
 const char *PLUGIN_DATA = __DATE__;
@@ -77,9 +77,9 @@ PATCH_DECLATOR(advMapHints, AdventureMapHints)
 _LHF_(HooksInit)
 {
 
-    PATCH_GETTER(scroll, MapScroller);
+    // PATCH_GETTER(scroll, MapScroller);
     PATCH_GETTER(graphics, GraphicsEnhancements);
-    PATCH_GETTER(cmbhints, CombatHints);
+    // PATCH_GETTER(cmbhints, CombatHints);
     PATCH_GETTER(features, GameplayFeature);
     PATCH_GETTER(ERI, ExtendedResourcesInfo);
     PATCH_GETTER(artifacts, ArtifactHints);
@@ -90,7 +90,7 @@ _LHF_(HooksInit)
         PATCH_GETTER(advMapHints, AdventureMapHints);
     }
 
-    _PI->WriteHiHook(0x0403F60, THISCALL_, H3AdventureMgrDlg__SetButtonsPlayerColor);
+    // _PI->WriteHiHook(0x0403F60, THISCALL_, H3AdventureMgrDlg__SetButtonsPlayerColor);
 
     return EXEC_DEFAULT;
 }
@@ -133,8 +133,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
             // move and resize iam00.def (next hero buttn)
             constexpr BYTE defWidth = 32;
 
-            _PI->WriteByte(0x401A85 + 1, defWidth);        // set width
-            _PI->WriteDword(0x401A8C + 1, 679 + defWidth); // set y
+          //  _PI->WriteByte(0x401A85 + 1, defWidth);        // set width
+         //   _PI->WriteDword(0x401A8C + 1, 679 + defWidth); // set y
         }
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
