@@ -4928,7 +4928,7 @@ namespace h3
 
 		namespace NPositions
         {
-            enum eArtifactPositions
+            enum eArtifactPositions : INT32
             {
                 NONE           = 0,
                 BACKPACK       = NONE,
@@ -4960,7 +4960,7 @@ namespace h3
 
         namespace NType
         {
-            enum eArtifactType
+            enum eArtifactType : INT32
             {
                 SPECIAL  = 1,
                 TREASURE = 2,
@@ -4974,7 +4974,7 @@ namespace h3
 
         namespace NCombination
         {
-            enum eCombinationArtifacts
+            enum eCombinationArtifacts : INT32
             {
                 NONE                       = -1,
                 ANGELIC_ALLIANCE           = 0,
@@ -13551,6 +13551,7 @@ namespace h3
 		 */
 		_H3API_ LPCSTR  GetText(UINT32 row) const;
 		_H3API_ LPCSTR  GetText(UINT32 row);
+		_H3API_ UINT32  Size();
 		_H3API_ VOID    UnLoad();
 		_H3API_ LPCSTR& operator[](UINT row);
 		_H3API_ LPCSTR* begin();
@@ -16308,7 +16309,7 @@ namespace h3
 		INT32 spEffect;
 		/** @brief [34] base value of spell for calculations*/
 		INT32 baseValue[4];
-		/** @brief [44] change for each class?*/
+		/** @brief [44] chance for each town*/
 		INT32 chanceToGet[9];
 		/** @brief [68] */
 		UINT32 aiValue[4];
@@ -32018,7 +32019,11 @@ namespace h3
 	{
 		return text[row - 1];
 	}
-	_H3API_ H3TextFile* H3TextFile::Load(LPCSTR name)
+    _H3API_ UINT32 H3TextFile::Size()
+    {
+        return end() - begin() >> 2;
+    }
+    _H3API_ H3TextFile* H3TextFile::Load(LPCSTR name)
 	{
 		return THISCALL_1(H3TextFile*, 0x55BDA0, name);
 	}

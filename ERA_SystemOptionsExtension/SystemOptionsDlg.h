@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stack>
 #include <unordered_map>
 
 #include "framework.h"
@@ -21,7 +22,8 @@ enum ePageItemId : INT
     PAGE_ITEM_GENERAL = 1,
     PAGE_ITEM_ADV_MAP,
     PAGE_ITEM_COMBAT,
-    PAGE_ITEM_ERA_MODS,
+    // PAGE_ITEM_ERA_MODS,
+    PAGE_ITEM_TOTAL_COUNT,
 };
 
 enum ePageIndex : INT
@@ -31,6 +33,56 @@ enum ePageIndex : INT
     PAGE_INDEX_COMBAT,
     PAGE_INDEX_ERA_MODS,
 };
+struct RegisteredButtonInfo
+{
+    std::string nameKey;
+    std::string descriptionKey;
+    // union {
+    int ermFunctionId = 0;
+    void (*callback)();
+};
+
+struct ExternalButtonsManager
+{
+  private:
+    static ExternalButtonsManager ermInfo;
+    static ExternalButtonsManager pluginsInfo;
+
+  protected:
+    std::vector<RegisteredButtonInfo> registeredErmButtonsVec;
+    std::unordered_map<std::string, size_t> nameToIndexMap;
+    std::stack<size_t> freedIndices;
+
+  public:
+    BOOL RegisterButton(LPCSTR tag, const RegisteredButtonInfo &info);
+    BOOL UnregisterButton(LPCSTR tag);
+    size_t Size() const
+    {
+        return nameToIndexMap.size();
+    }
+    const std::vector<RegisteredButtonInfo> &Data() const
+    {
+        return registeredErmButtonsVec;
+    }
+    VOID Clear()
+    {
+        registeredErmButtonsVec.clear();
+        nameToIndexMap.clear();
+        size_t size = freedIndices.size();
+        for (size_t i = 0; i < size; i++)
+            freedIndices.pop();
+    }
+
+  public:
+    static ExternalButtonsManager &GetErmInfo()
+    {
+        return ermInfo;
+    }
+    static ExternalButtonsManager &GetPluginsInfo()
+    {
+        return pluginsInfo;
+    }
+};
 
 class SystemOptionsDlg : public H3Dlg
 {
@@ -39,7 +91,7 @@ class SystemOptionsDlg : public H3Dlg
     static constexpr int DLG_HEIGHT = 487;
     static constexpr int DLG_CAPTION_BUTTON_TOP_MARGIN = 18;
     static constexpr int DLG_CAPTION_BUTTON_HEIGHT = 40;
-    static constexpr int DLG_TOPSETTINGS_MARGIN = DLG_CAPTION_BUTTON_TOP_MARGIN + DLG_CAPTION_BUTTON_HEIGHT + 4;
+    static constexpr int DLG_TOP_SETTINGS_MARGIN = DLG_CAPTION_BUTTON_TOP_MARGIN + DLG_CAPTION_BUTTON_HEIGHT + 4;
 
     static constexpr int DLG_X_MARGIN = 28;
     static constexpr int DLG_LEFT_PART_X_MARGIN = DLG_X_MARGIN;
@@ -51,14 +103,6 @@ class SystemOptionsDlg : public H3Dlg
     static constexpr LPCSTR PAGE_CAPTION_DEF_NAME = "GSPsys1.def";
     static constexpr LPCSTR SINGLE_BUTTON = "GSPsys0.def";
 
-    static constexpr LPCSTR MAIN_MENU_WIDGET_UUID = "rmg_main_menu_widget";
-    struct RegisteredErmButtonInfo
-    {
-        std::string nameKey;
-        std::string descriptionKey;
-        int ermFunctionId;
-    };
-    static std::unordered_map<std::string, RegisteredErmButtonInfo> registeredErmButtons;
     struct SettingsPage
     {
         H3DlgCaptionButton *captionBttn = nullptr;
@@ -70,9 +114,9 @@ class SystemOptionsDlg : public H3Dlg
         H3Vector<H3DlgItem *> items;
         H3Vector<ISetting *> settings;
         H3Vector<H3DlgPcx16 *> createdDlgTitles;
-        //  H3LoadedPcx16 *background = nullptr;
         std::unordered_map<int, ISetting *> settingsByItemId;
 
+      public:
         SettingsPage(H3DlgCaptionButton *captionBttn) : captionBttn(captionBttn)
         {
             if (!captionBttn)
@@ -81,14 +125,6 @@ class SystemOptionsDlg : public H3Dlg
             id = captionBttn->GetID();
             captionBttn->SetClickFrame(1);
             firstItemId = id * 100 + 100;
-            return;
-
-            // if (background = H3LoadedPcx16::Create(DLG_WIDTH, DLG_HEIGHT))
-            //{
-            //     const int playerColor = P_Game->GetPlayerID();
-            //     background->BackgroundRegion(0, 0, DLG_WIDTH, DLG_HEIGHT, false);
-            //     background->FrameRegion(0, 0, DLG_WIDTH, DLG_HEIGHT, false, playerColor, false);
-            // }
         }
         virtual ~SettingsPage()
         {
@@ -102,8 +138,6 @@ class SystemOptionsDlg : public H3Dlg
             }
             for (auto &setting : settings)
                 delete setting;
-            // if (background)
-            //     background->Destroy();
         }
 
       public:
@@ -167,28 +201,30 @@ class SystemOptionsDlg : public H3Dlg
         }
     };
 
+  public:
   protected:
     BOOL isInCombat = false;
     BOOL settingsChanged = false;
     const BOOL quickCombatSettingState = OriginalConfig::Get().quickCombat;
-
-    // static constexpr const char* m_iniPath = "Runtime/RMG_CustomizeObjectsProperties.ini";
     eDlgCallSource dlgCallSource = UNKNOWN;
     SettingsPage *m_currentPage = nullptr;
-    H3Vector<SettingsPage *> m_pages;
-
-  public:
-    static SystemOptionsDlg *instance;
+    std::vector<SettingsPage *> m_pages;
+    std::vector<const RegisteredButtonInfo *> sortedButtonsInfo;
+    std::vector<CaptionButtonSetting *> callbackButtons;
+    H3DlgScrollbar *scrollBar = nullptr;
+    UINT currentTopErmButtonIdx = 0;
 
   protected:
-    // ctors
+    static SystemOptionsDlg *instance;
+
   public:
+    // ctors
     SystemOptionsDlg(int width, int height, int x, int y);
     SystemOptionsDlg() : SystemOptionsDlg(DLG_WIDTH, DLG_HEIGHT, -1, -1) {};
     virtual ~SystemOptionsDlg();
 
-    // virtual methods
   private:
+    // virtual methods
     virtual BOOL OnCreate() override;
     virtual BOOL DialogProc(H3Msg &msg) override;
     virtual BOOL OnLeftClick(INT itemId, H3Msg &msg) override;
@@ -196,7 +232,7 @@ class SystemOptionsDlg : public H3Dlg
   private:
     void CreateGameControlButtons() noexcept;
     void CreateDlgPages() noexcept;
-    void CreateOtherSettingsPanel(SettingsPage *page, const int x, const int y, int &itemId) noexcept;
+    void CreateImportedSettingsPanel(SettingsPage *page, const int x, const int y, int &itemId) noexcept;
 
     void InitDlgPages()
     {
@@ -211,7 +247,7 @@ class SystemOptionsDlg : public H3Dlg
     }
     void SetActivePage(const UINT pageId, const BOOL redraw)
     {
-        if (m_pages.Size() <= pageId)
+        if (m_pages.size() <= pageId)
             return;
         auto &page = m_pages[pageId];
         if (m_currentPage != page)
@@ -220,39 +256,78 @@ class SystemOptionsDlg : public H3Dlg
                 m_currentPage->SetVisible(FALSE);
 
             page->SetVisible(TRUE);
-            int yOffset = DLG_TOPSETTINGS_MARGIN;
-            // if (page->background)
-            //{
-            //     page->background->DrawToPcx16(0, yOffset, FALSE, background, 0, yOffset);
-            //     libc::memcpy(background->buffer, page->background->buffer, background->buffSize);
-            // }
+            int yOffset = DLG_TOP_SETTINGS_MARGIN;
             m_currentPage = page;
             if (redraw)
                 Redraw();
         }
     }
 
-    BOOL ReadIniDlgSettings() noexcept;
-    BOOL WriteIniDlgSettings() const noexcept;
+    VOID AssignErmButtons(const int firstItemId, const BOOL redraw) noexcept
+    {
+        currentTopErmButtonIdx = firstItemId;
+        const size_t length = callbackButtons.size();
+        for (size_t i = 0; i < length; i++)
+        {
+            const size_t id = firstItemId + i;
+            const auto &info = sortedButtonsInfo[id];
+            LPCSTR namePtr = info->nameKey.empty() ? h3_NullString : EraJS::read(info->nameKey);
+            LPCSTR descriptionPtr = info->descriptionKey.empty() ? h3_NullString : EraJS::read(info->descriptionKey);
+
+            auto button = callbackButtons[i]->captionButton;
+            button->SetText(namePtr);
+            button->SetRightClickHint(descriptionPtr);
+            if (const int ermFunctionId = info->ermFunctionId)
+            {
+                callbackButtons[i]->SetOnChange([ermFunctionId](ISetting *) { CallErmFunction(ermFunctionId); });
+            }
+            else if (const auto &function = info->callback)
+            {
+                callbackButtons[i]->SetOnChange([function](ISetting *) { CallPluginFunction(function); });
+            }
+            if (redraw)
+            {
+                button->Draw();
+                button->Refresh();
+            }
+        }
+    }
+
+  private:
+    static void CallWogOptionsDlg();
+    static void CallPluginFunction(void *function)
+    {
+        unsigned long old_esp = 0;
+        void *local_cb = function;
+        __asm {
+            mov old_esp, esp
+            pushad;
+            call local_cb
+                popad;
+            mov esp, old_esp
+        }
+    }
+    static void __stdcall CallErmFunction(const int ermFunctionId)
+    {
+        Era::FireErmEvent(ermFunctionId);
+    }
+    static VOID __fastcall ScrollBarProc(INT32 itemId, H3BaseDlg *_dlg)
+    {
+        auto dlg = dynamic_cast<SystemOptionsDlg *>(_dlg);
+        if (itemId != dlg->currentTopErmButtonIdx)
+        {
+            dlg->AssignErmButtons(itemId, TRUE);
+            auto scrollBar = dlg->scrollBar;
+            scrollBar->Draw();
+            scrollBar->Refresh();
+        }
+    }
 
   public:
-    inline INT32 ResultItemId() const noexcept
+    inline Era::EGameMenuTarget ResultItemId() const noexcept
     {
-        return resultItemId;
+        return Era::EGameMenuTarget(resultItemId);
     }
-    static _ERH_(OnGameLeave)
-    {
-        registeredErmButtons.clear();
-    }
-    static void SetPatches(PatcherInstance *_pi)
-    {
-        _REH_(OnGameLeave);
-    }
-
-    // hooks
-  private:
-    static void __stdcall CallWogOptionsDlg();
-    static void __stdcall CallSelectLanguageDlg();
-
-    static void AfterDlgClose();
+    //  hooks
+    static void SetPatches(PatcherInstance *_pi);
 };

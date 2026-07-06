@@ -3,6 +3,8 @@
 
 #pragma comment(linker, "/EXPORT:RegisterErmCallbackButton=_RegisterErmCallbackButton@16")
 #pragma comment(linker, "/EXPORT:UnregisterErmCallbackButton=_UnregisterErmCallbackButton@4")
+#pragma comment(linker, "/EXPORT:RegisterPluginCallbackButton=_RegisterPluginCallbackButton@16")
+#pragma comment(linker, "/EXPORT:UnregisterPluginCallbackButton=_UnregisterPluginCallbackButton@4")
 
 namespace scroll
 {
@@ -22,23 +24,24 @@ class MapScroller : public IGamePatch
 #define FRAME_DARK_COLOR H3RGB888(0x31, 0x21, 0x10)
 
 SystemOptionsDlg *SystemOptionsDlg::instance = nullptr;
-std::unordered_map<std::string, SystemOptionsDlg::RegisteredErmButtonInfo> SystemOptionsDlg::registeredErmButtons;
+ExternalButtonsManager ExternalButtonsManager::ermInfo{};
+ExternalButtonsManager ExternalButtonsManager::pluginsInfo{};
 
-DllExport BOOL __stdcall RegisterErmCallbackButton(const char *tag, const char *name, const char *description,
-                                                   int ermFunctionId)
+DllExport BOOL __stdcall RegisterErmCallbackButton(LPCSTR tag, LPCSTR name, LPCSTR description, int ermFunctionId)
 {
-    const BOOL isNew = SystemOptionsDlg::registeredErmButtons.find(tag) == SystemOptionsDlg::registeredErmButtons.end();
-    SystemOptionsDlg::registeredErmButtons[tag] = {name, description, ermFunctionId};
-    return isNew;
+    return ExternalButtonsManager::GetErmInfo().RegisterButton(tag, {name, description, ermFunctionId, nullptr});
 }
-DllExport BOOL __stdcall UnregisterErmCallbackButton(const char *tag)
+DllExport BOOL __stdcall UnregisterErmCallbackButton(LPCSTR tag)
 {
-    const BOOL isNew = SystemOptionsDlg::registeredErmButtons.find(tag) == SystemOptionsDlg::registeredErmButtons.end();
-    if (!isNew)
-    {
-        SystemOptionsDlg::registeredErmButtons.erase(tag);
-    }
-    return !isNew;
+    return ExternalButtonsManager::GetErmInfo().UnregisterButton(tag);
+}
+DllExport BOOL __stdcall RegisterPluginCallbackButton(LPCSTR tag, LPCSTR name, LPCSTR description, void (*callback)())
+{
+    return ExternalButtonsManager::GetPluginsInfo().RegisterButton(tag, {name, description, 0, callback});
+}
+DllExport BOOL __stdcall UnregisterPluginCallbackButton(LPCSTR tag)
+{
+    return ExternalButtonsManager::GetPluginsInfo().UnregisterButton(tag);
 }
 
 void __stdcall ShowHealthBarDlg();
@@ -64,11 +67,11 @@ SystemOptionsDlg::SystemOptionsDlg(int width, int height, int x, int y)
 
     // split dlg by half with thick frame
     constexpr int dlgCenterX = DLG_WIDTH >> 1;
-    background->DrawThickFrame(dlgCenterX, DLG_TOPSETTINGS_MARGIN, 1,
-                               DLG_HEIGHT - DLG_TOPSETTINGS_MARGIN - DLG_CAPTION_BUTTON_TOP_MARGIN, 1,
+    background->DrawThickFrame(dlgCenterX, DLG_TOP_SETTINGS_MARGIN, 1,
+                               DLG_HEIGHT - DLG_TOP_SETTINGS_MARGIN - DLG_CAPTION_BUTTON_TOP_MARGIN, 1,
                                FRAME_LIGHT_COLOR);
-    background->DrawThickFrame(dlgCenterX + 1, DLG_TOPSETTINGS_MARGIN, 1,
-                               DLG_HEIGHT - DLG_TOPSETTINGS_MARGIN - DLG_CAPTION_BUTTON_TOP_MARGIN, 1,
+    background->DrawThickFrame(dlgCenterX + 1, DLG_TOP_SETTINGS_MARGIN, 1,
+                               DLG_HEIGHT - DLG_TOP_SETTINGS_MARGIN - DLG_CAPTION_BUTTON_TOP_MARGIN, 1,
                                FRAME_DARK_COLOR);
 
     // create buttons for loading/saving/restarting/quitting the game
@@ -126,6 +129,7 @@ void SystemOptionsDlg::CreateGameControlButtons() noexcept
         if (button.hotkey == eVKey::H3VK_ESCAPE)
         {
             bttn->AddHotkey(eVKey::H3VK_ENTER);
+            bttn->AddHotkey(eVKey::H3VK_O);
         }
         if (const auto hint = button.hintPtr)
         {
@@ -139,7 +143,7 @@ void SystemOptionsDlg::CreateGameControlButtons() noexcept
 }
 void SystemOptionsDlg::CreateDlgPages() noexcept
 {
-
+    m_pages.reserve(PAGE_ITEM_TOTAL_COUNT);
     OriginalConfig &config = OriginalConfig::Get();
     AdditionalConfig &extraConfig = AdditionalConfig::Get();
     const int callType = dlgCallSource;
@@ -157,7 +161,7 @@ void SystemOptionsDlg::CreateDlgPages() noexcept
     constexpr int baseSettingHeight = ISetting::BASE_SETTINGS_Y_OFFSET;
     constexpr int leftStartX = DLG_LEFT_PART_X_MARGIN;
     constexpr int rightStartX = DLG_RIGHT_PART_X_MARGIN;
-    constexpr int settingsStartY = DLG_TOPSETTINGS_MARGIN;
+    constexpr int settingsStartY = DLG_TOP_SETTINGS_MARGIN;
     const BOOL isTutorial = P_Game->inTutorial;
 
     // GENERAL PAGE
@@ -222,7 +226,7 @@ void SystemOptionsDlg::CreateDlgPages() noexcept
         }
 
         // CREATE CALLBACK BUTTONS
-        CreateOtherSettingsPanel(page, checkboxX, settingsStartY + baseSettingHeight * 7, itemId);
+        CreateImportedSettingsPanel(page, checkboxX, settingsStartY + baseSettingHeight * 7, itemId);
 
         // RIGHT PAGE PART
         constexpr int panelX = DLG_RIGHT_PART_X_MARGIN;
@@ -253,7 +257,7 @@ void SystemOptionsDlg::CreateDlgPages() noexcept
                                                 ERA_OPT(system, alternativeButtonClick, hint)};
 
         auto splitButtonSoundSetting = page->CreateSetting<CheckBoxSetting>(splitButtonSoundInfo);
-        ;
+
         splitButtonSoundSetting->SetOnChange(
             [](ISetting *setting) { sound::SoundSettings::SetAlternativButtonClickState(setting->value.current); });
 
@@ -299,7 +303,7 @@ void SystemOptionsDlg::CreateDlgPages() noexcept
         itemId += Switch10XPanel::BUTTONS_COUNT << 1;
 
         AddItem(captionBttn);
-        m_pages.Add(page);
+        m_pages.emplace_back(page);
     }
 
     // ADV MAP PAGE
@@ -447,7 +451,7 @@ void SystemOptionsDlg::CreateDlgPages() noexcept
         //         *(sender->value.valuePtr) = sender->value.dlgStart;
         //     }
         // });
-        m_pages.Add(page);
+        m_pages.emplace_back(page);
     }
 
     // COMBAT PAGE
@@ -636,12 +640,13 @@ void SystemOptionsDlg::CreateDlgPages() noexcept
             }
         });
 
-        m_pages.Add(page);
+        m_pages.emplace_back(page);
     }
+    m_pages.shrink_to_fit();
     InitDlgPages();
 }
 
-void SystemOptionsDlg::CreateOtherSettingsPanel(SettingsPage *page, const int x, const int y, int &itemId) noexcept
+void SystemOptionsDlg::CreateImportedSettingsPanel(SettingsPage *page, const int x, const int y, int &itemId) noexcept
 {
     constexpr int baseSettingHeight = ISetting::BASE_SETTINGS_Y_OFFSET;
     int callbackY = y; // settingsStartY + baseSettingHeight * 7;
@@ -657,10 +662,11 @@ void SystemOptionsDlg::CreateOtherSettingsPanel(SettingsPage *page, const int x,
         typedef void(__stdcall * CallLocaleSelectionDlg_t)(int, int, int);
         typedef const char *(__stdcall * GetDisplayedName_t)();
 
-        auto callDlg = reinterpret_cast<CallLocaleSelectionDlg_t>(GetProcAddress(plugin, "CallLocaleSelectionDlg"));
+        auto callLocaleSelectionDlg =
+            reinterpret_cast<CallLocaleSelectionDlg_t>(GetProcAddress(plugin, "CallLocaleSelectionDlg"));
         auto getDisplayedName = reinterpret_cast<GetDisplayedName_t>(GetProcAddress(plugin, "GetDisplayedName"));
 
-        if (callDlg && getDisplayedName)
+        if (callLocaleSelectionDlg && getDisplayedName)
         {
             maxButtonsToShow--;
             const SettingsInfo selectLang = {
@@ -668,9 +674,9 @@ void SystemOptionsDlg::CreateOtherSettingsPanel(SettingsPage *page, const int x,
             };
             callbackY += baseSettingHeight;
             auto captionSetting = page->CreateSetting<CaptionButtonSetting>(selectLang);
-            captionSetting->SetOnChange([callDlg, getDisplayedName](ISetting *setting) {
+            captionSetting->SetOnChange([callLocaleSelectionDlg, getDisplayedName](ISetting *setting) {
                 auto it = dynamic_cast<CaptionButtonSetting *>(setting)->captionButton;
-                callDlg(it->GetAbsoluteX() + it->GetWidth(), -1, 0);
+                callLocaleSelectionDlg(it->GetAbsoluteX() + it->GetWidth(), -1, 0);
                 LPCSTR newLangDisplayedName = getDisplayedName();
                 if (libc::strcmpi(it->GetText(), newLangDisplayedName) != 0)
                 {
@@ -682,37 +688,56 @@ void SystemOptionsDlg::CreateOtherSettingsPanel(SettingsPage *page, const int x,
         }
     }
 
-    const SettingsInfo wogOptionCaption = {"system_wog_option",
-                                           {x, callbackY},
-                                           itemId++,
-                                           nullptr,
-                                           ERA_OPT(system, wogOptions, name),
-                                           ERA_OPT(system, wogOptions, hint)};
+    RegisteredButtonInfo wogOptionsInfo = {ERA_OPT(system, wogOptions, name), ERA_OPT(system, wogOptions, hint), 0,
+                                           CallWogOptionsDlg};
 
-    auto captionSetting = page->CreateSetting<CaptionButtonSetting>(wogOptionCaption);
-    captionSetting->SetOnChange([](ISetting *) { CallWogOptionsDlg(); });
-    maxButtonsToShow--;
-    callbackY += baseSettingHeight;
+    ExternalButtonsManager::GetPluginsInfo().RegisterButton("system_wog_option", wogOptionsInfo);
 
-    // only for game on map
-    maxButtonsToShow = Clamp(0, maxButtonsToShow, registeredErmButtons.size());
+    ExternalButtonsManager *buttonsInfos[] = {&ExternalButtonsManager::GetPluginsInfo(),
+                                              &ExternalButtonsManager::GetErmInfo()};
 
-    for (auto &bttn : registeredErmButtons)
+    size_t totalButtonsToAdd = 0;
+    for (auto &buttonsInfo : buttonsInfos)
     {
-        const auto &info = bttn.second;
-        const int ermFunctionId = info.ermFunctionId;
-        LPCSTR namePtr = info.nameKey.empty() ? nullptr : info.nameKey.c_str();
-        LPCSTR descriptionPtr = info.descriptionKey.empty() ? nullptr : info.descriptionKey.c_str();
-        SettingsInfo bttnInfo = {bttn.first.c_str(), {x, callbackY}, itemId++, nullptr, namePtr, descriptionPtr};
+        const size_t registeredNum = buttonsInfo->Size();
+        if (!registeredNum)
+            continue;
 
-        auto captionSetting = page->CreateSetting<CaptionButtonSetting>(bttnInfo);
-        captionSetting->SetOnChange([ermFunctionId](ISetting *) { Era::FireErmEvent(ermFunctionId); });
-        callbackY += baseSettingHeight;
-        if (--maxButtonsToShow == 0)
-            return;
+        for (auto &obj : buttonsInfo->Data())
+        {
+            if (!obj.nameKey.empty())
+            {
+                sortedButtonsInfo.emplace_back(&obj);
+            }
+        }
+
+        totalButtonsToAdd += registeredNum;
     }
 
-    // wog option buttons:
+    if (!totalButtonsToAdd)
+        return;
+
+    sortedButtonsInfo.reserve(totalButtonsToAdd);
+
+    // only for game on map
+    maxButtonsToShow = Clamp(0, maxButtonsToShow, totalButtonsToAdd);
+
+    const size_t ticksCount = totalButtonsToAdd - maxButtonsToShow + 1;
+    if (ticksCount > 1)
+    {
+        scrollBar = H3DlgScrollbar::Create(x + ISetting::WIDTH, callbackY, 16, baseSettingHeight * maxButtonsToShow - 6,
+                                           -1, ticksCount, ScrollBarProc, FALSE, 1, TRUE);
+        page->items += scrollBar;
+    }
+
+    for (size_t i = 0; i < maxButtonsToShow; i++)
+    {
+        SettingsInfo bttnInfo = {h3_NullString, {x, callbackY}, itemId++, nullptr, nullptr, nullptr};
+        auto ermButton = page->CreateSetting<CaptionButtonSetting>(bttnInfo);
+        callbackButtons.emplace_back(ermButton);
+        callbackY += baseSettingHeight;
+    }
+    AssignErmButtons(0, FALSE);
 }
 
 BOOL SystemOptionsDlg::OnCreate()
@@ -764,6 +789,14 @@ BOOL SystemOptionsDlg::OnLeftClick(INT itemId, H3Msg &msg)
 
     using target = Era::EGameMenuTarget;
 
+    // if (itemId == target::PAGE_RESTART && dlgCallSource == eDlgCallSource::COMBAT &&
+    //    H3Messagebox::Choice(P_GeneralText->GetText(69)))
+    //{
+    //    this->resultItemId = itemId;
+    //    this->Stop();
+    //    return FALSE;
+    //}
+
     switch (itemId)
     {
     case ePageItemId::PAGE_ITEM_GENERAL:
@@ -776,8 +809,14 @@ BOOL SystemOptionsDlg::OnLeftClick(INT itemId, H3Msg &msg)
     case target::PAGE_MAIN:
         if (!H3Messagebox::Choice(P_GeneralText->GetText(580)))
             break;
-    case target::PAGE_SAVE_GAME:
     case target::PAGE_RESTART:
+        // in combat do not close dlg when asking for a game restart
+        if (itemId == target::PAGE_RESTART && dlgCallSource == eDlgCallSource::COMBAT &&
+            !H3Messagebox::Choice(P_GeneralText->GetText(69)))
+        {
+            break;
+        }
+    case target::PAGE_SAVE_GAME:
     case 30722:
         this->resultItemId = itemId;
         this->Stop();
@@ -789,7 +828,7 @@ BOOL SystemOptionsDlg::OnLeftClick(INT itemId, H3Msg &msg)
     return FALSE;
 }
 
-void __stdcall SystemOptionsDlg::CallWogOptionsDlg()
+void SystemOptionsDlg::CallWogOptionsDlg()
 {
     const BOOL allowWogOptionsChanges = instance->dlgCallSource == MAIN_MENU && !instance->networkGame;
     const int storeValue = IntAt(0x291A430);
@@ -802,9 +841,6 @@ void __stdcall SystemOptionsDlg::CallWogOptionsDlg()
     IntAt(0x291A430) = storeValue;
 }
 
-void SystemOptionsDlg::AfterDlgClose()
-{
-}
 SystemOptionsDlg::~SystemOptionsDlg()
 {
     for (auto &page : m_pages)
@@ -844,7 +880,61 @@ SystemOptionsDlg::~SystemOptionsDlg()
         CDECL_0(LONG, 0x0050C370); // j_WriteRegistry -> save settings to heroes3.ini
     }
 
-    instance = nullptr;
-
     P_WindowManager->resultItemID = this->resultItemId;
+
+    instance = nullptr;
+}
+
+static _ERH_(OnGameLeave)
+{
+    ExternalButtonsManager::GetErmInfo().Clear();
+}
+void SystemOptionsDlg::SetPatches(PatcherInstance *_pi)
+{
+
+    RegisteredButtonInfo wogOptionsInfo = {ERA_OPT(system, wogOptions, name), ERA_OPT(system, wogOptions, hint), 0,
+                                           CallWogOptionsDlg};
+    ExternalButtonsManager::GetPluginsInfo().RegisterButton("system_wog_option", wogOptionsInfo);
+
+    _REH_(OnGameLeave);
+}
+
+BOOL ExternalButtonsManager::RegisterButton(LPCSTR tag, const RegisteredButtonInfo &info)
+{
+
+    auto it = nameToIndexMap.find(tag);
+    if (it != nameToIndexMap.cend())
+    {
+        registeredErmButtonsVec[it->second] = info;
+        return FALSE;
+    }
+    size_t targetIndex = 0;
+    if (freedIndices.empty())
+    {
+        targetIndex = registeredErmButtonsVec.size();
+        registeredErmButtonsVec.emplace_back(info);
+    }
+    else
+    {
+        targetIndex = freedIndices.top();
+        freedIndices.pop();
+        registeredErmButtonsVec[targetIndex] = info;
+    }
+    nameToIndexMap[tag] = targetIndex;
+
+    return TRUE;
+}
+
+BOOL ExternalButtonsManager::UnregisterButton(LPCSTR tag)
+{
+    auto it = nameToIndexMap.find(tag);
+    if (it == nameToIndexMap.cend())
+    {
+        return FALSE;
+    }
+    const size_t targetIndex = it->second;
+    registeredErmButtonsVec[targetIndex] = {};
+    freedIndices.push(targetIndex);
+    nameToIndexMap.erase(tag);
+    return TRUE;
 }

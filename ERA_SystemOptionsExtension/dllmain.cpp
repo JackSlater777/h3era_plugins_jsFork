@@ -6,15 +6,16 @@ PatcherInstance *_PI = nullptr;
 namespace dllText
 {
 constexpr LPCSTR PLUGIN_AUTHOR = "daemon_n";
-constexpr LPCSTR PLUGIN_VERSION = "1.0.2";
+constexpr LPCSTR PLUGIN_VERSION = "1.3.1";
 constexpr LPCSTR PLUGIN_DATA = __DATE__;
 constexpr LPCSTR INSTANCE_NAME = "EraPlugin." PROJECT_NAME ".daemon_n";
+constexpr LPCSTR UNIQUE_BUTTON_NAME = "ERA_SystemOptionsExtension_Button";
+constexpr LPCSTR BUTTON_NAME_KEY = "era.opt.mainMenuButton.name";
+constexpr LPCSTR BUTTON_HINT_KEY = "era.opt.mainMenuButton.hint";
 } // namespace dllText
 
 _LHF_(AdvMapSettingsDlg)
 {
-    // return EXEC_DEFAULT;
-
     SystemOptionsDlg dlg;
     dlg.Start();
 
@@ -25,24 +26,26 @@ _LHF_(AdvMapSettingsDlg)
 void __stdcall CombatManager_ShowCombatSettingsDlg(HiHook *h, H3CombatManager *combatManager)
 {
 
+    using target = Era::EGameMenuTarget;
+    target menuTarget = target::PAGE_DEFAULT;
+    {
+        SystemOptionsDlg dlg;
+        dlg.networkGame = 0;
+        dlg.Start();
+        dlg.networkGame = -1;
+        menuTarget = dlg.ResultItemId();
+    }
     // return THISCALL_1(void, h->GetDefaultFunc(), combatManager);
 
-    SystemOptionsDlg dlg;
-    dlg.networkGame = 0;
-    dlg.Start();
-    combatManager->doNotDrawShade = false;
-
+    combatManager->doNotDrawShade = 0;
     THISCALL_3(void, 0x04934B0, combatManager, FALSE, TRUE); // BattleMgr::DrawGrid
-    combatManager->Refresh(1, 0, 1);
+    combatManager->Refresh();
 
-    dlg.networkGame = -1;
-    using target = Era::EGameMenuTarget;
-    target menuTarget = target(dlg.ResultItemId());
     switch (menuTarget)
     {
     case target::PAGE_RESTART:
-        if (!H3Messagebox::Choice(P_GeneralText->GetText(69)))
-            break;
+        // if (!H3Messagebox::Choice(P_GeneralText->GetText(69)))
+        //     break;
     case target::PAGE_LOAD_GAME:
     case target::PAGE_MAIN:
     case target::PAGE_QUIT:
@@ -69,7 +72,7 @@ int __fastcall HandleSystemDlgStart(void *_msg)
         }
         else if (msg->IsRightClick())
         {
-            H3Messagebox::RMB(EraJS::read("era.opt.mainMenuButton.hint"));
+            H3Messagebox::RMB(EraJS::read(dllText::BUTTON_HINT_KEY));
         }
     }
     return true;
@@ -79,9 +82,8 @@ _ERH_(OnAfterWog)
 {
     using namespace mainmenu;
     const eMenuFlags flags = static_cast<eMenuFlags>(eMenuFlags::ALL | eMenuFlags::ON_TOP);
-    constexpr auto UNIQUE_BUTTON_NAME = "ERA_SystemOptionsExtension_Button";
-    const char *name = EraJS::read("era.opt.mainMenuButton.name");
-    MenuWidgetInfo langInfo{UNIQUE_BUTTON_NAME, name, flags, &HandleSystemDlgStart};
+    const char *name = EraJS::read(dllText::BUTTON_NAME_KEY);
+    MenuWidgetInfo langInfo{dllText::UNIQUE_BUTTON_NAME, name, flags, &HandleSystemDlgStart};
     MainMenu_RegisterWidget(langInfo);
 
     return;

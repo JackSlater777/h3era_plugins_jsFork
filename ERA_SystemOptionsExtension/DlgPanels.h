@@ -206,6 +206,7 @@ struct RadioBoxSetting : public ISetting
 {
     static constexpr int CHECKBOX_WIDTH = 32;
     static constexpr int CHECKBOX_HEIGHT = 24;
+    static constexpr LPCSTR RADIOBOX_DEF = "SYSOPRAD.def";
     BOOL requiresSelection = FALSE;
 
     H3Vector<H3DlgDef *> checkBoxes;
@@ -409,11 +410,14 @@ struct Switch10XPanel : public ISetting
             {
                 return TRUE;
             }
+            switchButtons[value.current]->SendCommand(6, 4);
+
             ClampValue();
             value.current = buttonIndex;
 
             backgroundPcx->Draw();
             backgroundPcx->Refresh();
+            switchButtons[value.current]->SendCommand(5, 4);
             switchButtons[value.current]->Draw();
             switchButtons[value.current]->Refresh();
             TriggerChange();
