@@ -110,7 +110,7 @@ void __stdcall HiHook_OnNewWeek(HiHook* h, H3Game* this_)
 	THISCALL_1(void, h->GetDefaultFunc(), this_);
 
 	// Heroes flags
-	for (size_t i = 0; i < h3::jsLimits::HEROES; i++)
+	for (size_t i = 0; i < P_HeroCount; i++)
 	{
 		H3Hero* hero = &P_Game->heroes[i];
 		trailblazer::H3MapItemTrailblazer::SetAsNotVisited(hero);
@@ -118,7 +118,7 @@ void __stdcall HiHook_OnNewWeek(HiHook* h, H3Game* this_)
 	}
 	
 	// Refugee camp - reset player flags
-	for (size_t i = 0; i < h3::jsLimits::CREATURES; i++)
+	for (size_t i = 0; i < P_CreatureCount; i++)
 	{
 		SetObjectFlagsVisitedByTeam(eObject::REFUGEE_CAMP, i, 0);
 	}
