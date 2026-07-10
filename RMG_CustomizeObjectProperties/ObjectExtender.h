@@ -27,6 +27,7 @@ class ObjectExtender
     int objectSubtype = eObject::NO_OBJ;
     BOOL m_isInited = FALSE;
     PatcherInstance *_pi = nullptr;
+    //LPCSTR visitingMessage = nullptr;
 
   public:
     static constexpr LPCSTR extraObjectInfo_key = "RMG.objectGeneration.%d.%d.text.hint";
@@ -112,6 +113,24 @@ class ObjectExtender
             isRightClick ? "\n\n" : " ",
             P_GeneralText->GetText(isVisitedByHero ? 354 : 355));
         objName->Append(h3_TextBuffer);
+    }
+
+    H3String GetVisitMessage() const
+    {
+        H3String message = H3String::Format("{%s}", RMGObjectInfo::GetObjectName(this->objectType, this->objectSubtype));
+        message.Append(
+            EraJS::read(H3String::Format(visit_key, this->objectType, this->objectSubtype)
+                .String()));
+        return message;
+    }
+
+    H3String GetVisitedMessage() const
+    {
+        H3String message = H3String::Format("{%s}", RMGObjectInfo::GetObjectName(this->objectType, this->objectSubtype));
+        message.Append(
+            EraJS::read(H3String::Format(visited_key, this->objectType, this->objectSubtype)
+                .String()));
+        return message;
     }
 
   public:

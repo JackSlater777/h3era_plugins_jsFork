@@ -2,6 +2,14 @@
 #include "../pch.h"
 
 
+
+// Временное хранение клетки.
+H3MapItem* TempCell = nullptr;
+
+
+
+
+
 // Можно ли зайти в триггер объекта
 BOOL8 TriggerIsUnmoveable(H3GlobalObjectSettings* objSettings, int terrain)
 {
@@ -87,8 +95,111 @@ _LHF_(LoHook_WaterUnmoveableTriggers_3)
     return NO_EXEC_DEFAULT;
 }
 
+_LHF_(LoHook_WaterUnmoveableTriggers_SaveTempCell)
+{
+    TempCell = reinterpret_cast<H3MapItem*>(c->eax);
 
+    return EXEC_DEFAULT;
+}
 
+_LHF_(LoHook_WaterUnmoveableTriggers_4)
+{
+    H3GlobalObjectSettings* type = reinterpret_cast<H3GlobalObjectSettings*>(c->edx + 16 * c->ecx);
+
+    c->return_address = TriggerIsUnmoveable(type, TempCell->land) != 0
+        ? 0x42F9C7
+        : 0x42FA70;
+
+    return NO_EXEC_DEFAULT;
+}
+
+_LHF_(LoHook_WaterUnmoveableTriggers_5)
+{
+    H3GlobalObjectSettings* type = reinterpret_cast<H3GlobalObjectSettings*>(c->eax + c->ecx);
+
+    c->return_address = TriggerIsUnmoveable(type, TempCell->land) != 0
+        ? 0x42FB61
+        : 0x42FAF2;
+
+    return NO_EXEC_DEFAULT;
+}
+
+_LHF_(LoHook_WaterUnmoveableTriggers_6)
+{
+    H3MapItem* cell = reinterpret_cast<H3MapItem*>(c->ebx);
+    H3GlobalObjectSettings* type = reinterpret_cast<H3GlobalObjectSettings*>(c->eax + c->ecx);
+
+    c->return_address = TriggerIsUnmoveable(type, cell->land) != 0
+        ? 0x48085A
+        : 0x4805D5;
+
+    return NO_EXEC_DEFAULT;
+}
+
+_LHF_(LoHook_WaterUnmoveableTriggers_7)
+{
+    H3MapItem* cell = reinterpret_cast<H3MapItem*>(c->ebx);
+    H3GlobalObjectSettings* type = reinterpret_cast<H3GlobalObjectSettings*>(c->eax + c->ecx);
+    
+    c->return_address = TriggerIsUnmoveable(type, cell->land) != 0
+        ? 0x480E15
+        : 0x480E48;
+
+    return NO_EXEC_DEFAULT;
+}
+
+_LHF_(LoHook_WaterUnmoveableTriggers_8)
+{
+    H3MapItem* cell = reinterpret_cast<H3MapItem*>(c->edi);
+
+    H3GlobalObjectSettings* type = reinterpret_cast<H3GlobalObjectSettings*>(c->edx + c->ecx);
+
+    if (TriggerIsUnmoveable(type, cell->land))
+    {
+        c->return_address = 0x4B2A9D;
+    }
+    else
+    {
+        c->return_address = 0x4B2A6D;
+    }
+
+    return NO_EXEC_DEFAULT;
+}
+
+_LHF_(LoHook_WaterUnmoveableTriggers_9)
+{
+    H3MapItem* cell = reinterpret_cast<H3MapItem*>(c->eax);
+    H3GlobalObjectSettings* type = &P_GlobalObjectSettings[cell->objectType];
+
+    c->return_address = TriggerIsUnmoveable(type, cell->land) != 0
+        ? 0x4E602B
+        : 0x4E6031;
+
+    return NO_EXEC_DEFAULT;
+}
+
+_LHF_(LoHook_WaterUnmoveableTriggers_SaveEdi)
+{
+    TempCell = reinterpret_cast<H3MapItem*>(c->edi);
+
+    return EXEC_DEFAULT;
+}
+
+_LHF_(LoHook_WaterUnmoveableTriggers_10)
+{
+    H3GlobalObjectSettings* type = reinterpret_cast<H3GlobalObjectSettings*>(c->edx + c->ecx);
+
+    if (TriggerIsUnmoveable(type, TempCell->land))
+    {
+        c->eax = (c->eax & ~0xFF);
+    }
+    else
+    {
+        c->eax = (c->eax & ~0xFF) | 1;
+    }
+
+    return NO_EXEC_DEFAULT;
+}
 
 
 void WaterObjectsPassability()
@@ -99,4 +210,22 @@ void WaterObjectsPassability()
     _PI->WriteLoHook(0x42E25D, LoHook_WaterUnmoveableTriggers_2);
     // Непроходимые клетки на воде (3).
     _PI->WriteLoHook(0x42E349, LoHook_WaterUnmoveableTriggers_3);
+    // Сохраняем клетку.
+    _PI->WriteLoHook(0x42F9A2, LoHook_WaterUnmoveableTriggers_SaveTempCell);
+    // Непроходимые клетки на воде (4).
+    _PI->WriteLoHook(0x42F9B8, LoHook_WaterUnmoveableTriggers_4);
+    // Непроходимые клетки на воде (5).
+    _PI->WriteLoHook(0x42FAEC, LoHook_WaterUnmoveableTriggers_5);
+    // Непроходимые клетки на воде (6).
+    _PI->WriteLoHook(0x480850, LoHook_WaterUnmoveableTriggers_6);
+    // Непроходимые клетки на воде (7).
+    _PI->WriteLoHook(0x480E0F, LoHook_WaterUnmoveableTriggers_7);
+    // Непроходимые клетки на воде (8).
+    _PI->WriteLoHook(0x4B2A67, LoHook_WaterUnmoveableTriggers_8);
+    // Непроходимые клетки на воде (9).
+    _PI->WriteLoHook(0x4E6019, LoHook_WaterUnmoveableTriggers_9);
+    // Непроходимые клетки на воде (сохраняем edi).
+    _PI->WriteLoHook(0x56AE2E, LoHook_WaterUnmoveableTriggers_SaveEdi);
+    // Непроходимые клетки на воде (10).
+    _PI->WriteLoHook(0x56B207, LoHook_WaterUnmoveableTriggers_10);
 }

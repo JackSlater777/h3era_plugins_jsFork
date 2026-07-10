@@ -21,20 +21,32 @@ OBJECT_EXTENDER_DECLARATOR(WateringPlaceExtender, wateringPlace)
 OBJECT_EXTENDER_DECLARATOR(WoGObjectsExtender, wog)
 
 // JS Objects
-OBJECT_EXTENDER_DECLARATOR(AncientLampExtender, ancientLamp)
+// 141
 OBJECT_EXTENDER_DECLARATOR(DreamTeacherExtender, dreamTeacher)
-OBJECT_EXTENDER_DECLARATOR(GraveExtender, grave)
-OBJECT_EXTENDER_DECLARATOR(HermitsShackExtender, hermitsShack)
-OBJECT_EXTENDER_DECLARATOR(HillFortExtender, hillFort)
-OBJECT_EXTENDER_DECLARATOR(JunkmanExtender, junkman)
-OBJECT_EXTENDER_DECLARATOR(MineralSpringExtender, mineralSpring)
-OBJECT_EXTENDER_DECLARATOR(ObservatoryExtender, observatory)
-OBJECT_EXTENDER_DECLARATOR(ProspectorExtender, prospector)
-OBJECT_EXTENDER_DECLARATOR(SkeletonTransformerExtender, skeletonTransformer)
-OBJECT_EXTENDER_DECLARATOR(TempleOfLoyaltyExtender, templeOfLoyalty)
-OBJECT_EXTENDER_DECLARATOR(TownGateExtender, townGate)
-OBJECT_EXTENDER_DECLARATOR(TrailblazerExtender, trailblazer)
-OBJECT_EXTENDER_DECLARATOR(WarlocksLabExtender, warlocksLab)
+OBJECT_EXTENDER_DECLARATOR(GraveExtender, grave) // Надо переместить в 212
+
+// 144
+OBJECT_EXTENDER_DECLARATOR(TempleOfLoyaltyExtender, templeOfLoyalty) // 0
+OBJECT_EXTENDER_DECLARATOR(SkeletonTransformerExtender, skeletonTransformer) // 1
+OBJECT_EXTENDER_DECLARATOR(MineralSpringExtender, mineralSpring) // 4
+OBJECT_EXTENDER_DECLARATOR(HermitsShackExtender, hermitsShack) // 5
+OBJECT_EXTENDER_DECLARATOR(JunkmanExtender, junkman) // 7
+OBJECT_EXTENDER_DECLARATOR(WarlocksLabExtender, warlocksLab) // 9
+OBJECT_EXTENDER_DECLARATOR(ProspectorExtender, prospector) // 10
+OBJECT_EXTENDER_DECLARATOR(TrailblazerExtender, trailblazer) // 11
+
+// 145
+OBJECT_EXTENDER_DECLARATOR(AncientLampExtender, ancientLamp) // 0
+OBJECT_EXTENDER_DECLARATOR(SeaBarrelExtender, seaBarrel) // 1
+OBJECT_EXTENDER_DECLARATOR(JetsamExtender, jetsam) // 2
+
+// 146
+OBJECT_EXTENDER_DECLARATOR(ObservatoryExtender, observatory) // 1
+
+// rest
+OBJECT_EXTENDER_DECLARATOR(HillFortExtender, hillFort) // type 35
+OBJECT_EXTENDER_DECLARATOR(TownGateExtender, townGate) // type 63, subtype 66
+
 
 namespace ExtendersInitializer
 {
@@ -50,33 +62,41 @@ void InitObjectExtenders()
             OBJECT_EXTENDER_GETTER(ShrinesExtender, shrines), OBJECT_EXTENDER_GETTER(SpellMarketExtender, spellMarket),
             OBJECT_EXTENDER_GETTER(UniversityExtender, university),
             OBJECT_EXTENDER_GETTER(WarehousesExtender, warehouses),
-            // OBJECT_EXTENDER_GETTER(WateringPlaceExtender, wateringPlace),
+            OBJECT_EXTENDER_GETTER(WateringPlaceExtender, wateringPlace),
             OBJECT_EXTENDER_GETTER(WoGObjectsExtender, wog),
         
             // JS Objects
-            OBJECT_EXTENDER_GETTER(AncientLampExtender, ancientLamp),
+            // 141
             OBJECT_EXTENDER_GETTER(DreamTeacherExtender, dreamTeacher),
-            OBJECT_EXTENDER_GETTER(GraveExtender, grave),
-            OBJECT_EXTENDER_GETTER(HermitsShackExtender, hermitsShack),
-            OBJECT_EXTENDER_GETTER(HillFortExtender, hillFort),
-            OBJECT_EXTENDER_GETTER(JunkmanExtender, junkman),
-            OBJECT_EXTENDER_GETTER(MineralSpringExtender, mineralSpring),
-            OBJECT_EXTENDER_GETTER(ObservatoryExtender, observatory),
-            OBJECT_EXTENDER_GETTER(ProspectorExtender, prospector),
-            OBJECT_EXTENDER_GETTER(SkeletonTransformerExtender, skeletonTransformer),
-            OBJECT_EXTENDER_GETTER(TempleOfLoyaltyExtender, templeOfLoyalty),
-            OBJECT_EXTENDER_GETTER(TownGateExtender, townGate),
-            OBJECT_EXTENDER_GETTER(TrailblazerExtender, trailblazer),
-            OBJECT_EXTENDER_GETTER(WarlocksLabExtender, warlocksLab),
-            OBJECT_EXTENDER_GETTER(WateringPlaceExtender, wateringPlace)
-        
+            OBJECT_EXTENDER_GETTER(GraveExtender, grave), // Надо переместить в 212
 
+            // 144
+            OBJECT_EXTENDER_GETTER(TempleOfLoyaltyExtender, templeOfLoyalty), // 0
+            OBJECT_EXTENDER_GETTER(SkeletonTransformerExtender, skeletonTransformer), // 1
+            OBJECT_EXTENDER_GETTER(MineralSpringExtender, mineralSpring), // 4
+            OBJECT_EXTENDER_GETTER(HermitsShackExtender, hermitsShack), // 5
+            OBJECT_EXTENDER_GETTER(JunkmanExtender, junkman), // 7
+            OBJECT_EXTENDER_GETTER(WarlocksLabExtender, warlocksLab), // 9
+            OBJECT_EXTENDER_GETTER(ProspectorExtender, prospector), // 10
+            OBJECT_EXTENDER_GETTER(TrailblazerExtender, trailblazer), // 11
+
+            // 145
+            OBJECT_EXTENDER_GETTER(AncientLampExtender, ancientLamp), // 0
+            OBJECT_EXTENDER_GETTER(SeaBarrelExtender, seaBarrel), // 1
+            OBJECT_EXTENDER_GETTER(JetsamExtender, jetsam), // 2
+
+            // 146
+            OBJECT_EXTENDER_GETTER(ObservatoryExtender, observatory), // 1
+
+            // rest
+            OBJECT_EXTENDER_GETTER(HillFortExtender, hillFort), // type 35
+            OBJECT_EXTENDER_GETTER(TownGateExtender, townGate) // type 63, subtype 66
         };
 
         constexpr size_t extendersCount =
             std::size(extendersList); // sizeof(extendersList) / sizeof(extender::ObjectExtender*);
 
-        static_assert(extendersCount == 23, "Unexpected number of extenders");
+        static_assert(extendersCount == 25, "Unexpected number of extenders");
         //! Get the extenders and initialize
         for (size_t i = 0; i < extendersCount; i++)
         {

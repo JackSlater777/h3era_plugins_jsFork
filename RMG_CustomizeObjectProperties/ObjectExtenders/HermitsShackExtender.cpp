@@ -150,9 +150,9 @@ BOOL HermitsShackExtender::VisitMapItem(H3Hero *hero, H3MapItem *mapItem, const 
 
         // Check basic or advanced secondary skills
         std::vector<int> skillIds;
-
+        
         int i = 0;
-        while (i < 28)
+        while (i < h3::limits::SECONDARY_SKILLS)
         {
             if (hero->secSkill[i] < 3 && hero->secSkill[i] > 0)
             {

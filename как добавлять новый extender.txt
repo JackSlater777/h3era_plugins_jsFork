@@ -1,0 +1,2 @@
+ExtendersInitializer.hpp:
+строка 24 и потом 69, и прибавить счетчик
