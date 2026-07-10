@@ -37,6 +37,7 @@
     <ClCompile Include="RMGObjectsEditor.cpp" />
     <ClCompile Include="RMG_SettingsDlg.cpp" />
     <ClCompile Include="ObjectExtenders\HdModPatches.cpp" />
+    <ClCompile Include="ObjectExtenders\WaterObjectsPassability.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdditionalProperties.h" />
@@ -74,5 +75,6 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="RMG_SettingsDlg.h" />
     <ClInclude Include="ObjectExtenders\HdModPatches.h" />
+    <ClInclude Include="ObjectExtenders\WaterObjectsPassability.h" />
   </ItemGroup>
 </Project>
