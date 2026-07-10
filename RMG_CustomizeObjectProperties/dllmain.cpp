@@ -1,36 +1,14 @@
 ﻿// dllmain.cpp : Определяет точку входа для приложения DLL.
-#include "pch.h"
-
+// #include "pch.h"
+#include "ExtendersInitializer.hpp"
 // declare dlg class here to avoid circular dependencies, also because it's only used in this file
-namespace rmgdlg
-{
-class RMG_SettingsDlg : public H3Dlg
-{
-  public:
-    static void SetPatches(PatcherInstance *_pi);
-};
-} // namespace rmgdlg
-
-#define OBJECT_EXTENDER_DECLATOR(className, nameSpaceName)                                                             \
-    namespace nameSpaceName                                                                                            \
-    {                                                                                                                  \
-    class className : public extender::ObjectExtender                                                                  \
-    {                                                                                                                  \
-      public:                                                                                                          \
-        static className &className::Get();                                                                            \
-    };                                                                                                                 \
-    }
-#define OBJECT_EXTENDER_GETTER(className, nameSpaceName) &nameSpaceName::className::Get()
-
-// #include "framework.h"
-using namespace h3;
+#include "RMG_SettingsDlg.h"
 
 namespace dllText
 {
-constexpr const char *PLUGIN_VERSION = "1.5.5";
+constexpr const char *PLUGIN_VERSION = "1.6.0";
 constexpr const char *PLUGIN_AUTHOR = "daemon_n";
 constexpr const char *INSTANCE_NAME = "EraPlugin." PROJECT_NAME ".daemon_n";
-// const char* PROJECT_NAME = "$(ProjectName)";
 constexpr const char *PLUGIN_DATA = __DATE__;
 } // namespace dllText
 void __stdcall OnReportVersion(Era::TEvent *e)
@@ -85,76 +63,10 @@ PatcherInstance *_PI = nullptr;
 16. fix Dlg Memory leaks with new ERA memory check tools - Done
 */
 
-OBJECT_EXTENDER_DECLATOR(ColosseumOfTheMagiExtender, colosseumOfTheMagi)
-OBJECT_EXTENDER_DECLATOR(CreatureBanksExtender, cbanks)
-OBJECT_EXTENDER_DECLATOR(GazeboExtender, gazebo)
-OBJECT_EXTENDER_DECLATOR(ShrinesExtender, shrines)
-OBJECT_EXTENDER_DECLATOR(SpellMarketExtender, spellMarket)
-OBJECT_EXTENDER_DECLATOR(UniversityExtender, university)
-OBJECT_EXTENDER_DECLATOR(WarehousesExtender, warehouses)
-OBJECT_EXTENDER_DECLATOR(WateringPlaceExtender, wateringPlace)
-OBJECT_EXTENDER_DECLATOR(WoGObjectsExtender, wog)
-// JS Objects
-OBJECT_EXTENDER_DECLATOR(AncientLampExtender, ancientLamp)
-OBJECT_EXTENDER_DECLATOR(DreamTeacherExtender, dreamTeacher)
-OBJECT_EXTENDER_DECLATOR(GraveExtender, grave)
-OBJECT_EXTENDER_DECLATOR(HermitsShackExtender, hermitsShack)
-OBJECT_EXTENDER_DECLATOR(HillFortExtender, hillFort)
-OBJECT_EXTENDER_DECLATOR(JunkmanExtender, junkman)
-OBJECT_EXTENDER_DECLATOR(MineralSpringExtender, mineralSpring)
-OBJECT_EXTENDER_DECLATOR(ObservatoryExtender, observatory)
-OBJECT_EXTENDER_DECLATOR(ProspectorExtender, prospector)
-OBJECT_EXTENDER_DECLATOR(SkeletonTransformerExtender, skeletonTransformer)
-OBJECT_EXTENDER_DECLATOR(TempleOfLoyaltyExtender, templeOfLoyalty)
-OBJECT_EXTENDER_DECLATOR(TownGateExtender, townGate)
-OBJECT_EXTENDER_DECLATOR(TrailblazerExtender, trailblazer)
-OBJECT_EXTENDER_DECLATOR(WarlocksLabExtender, warlocksLab)
-
 _LHF_(CrBanksTxt_BeforeLoad)
 {
     editor::RMGObjectsEditor::Get();
-    if (auto mgr = extender::ObjectExtenderManager::Get())
-    {
-        extender::ObjectExtender *extendersList[] = {
-            OBJECT_EXTENDER_GETTER(ColosseumOfTheMagiExtender, colosseumOfTheMagi),
-            OBJECT_EXTENDER_GETTER(CreatureBanksExtender, cbanks),
-            OBJECT_EXTENDER_GETTER(GazeboExtender, gazebo),
-            OBJECT_EXTENDER_GETTER(ShrinesExtender, shrines),
-            OBJECT_EXTENDER_GETTER(SpellMarketExtender, spellMarket),
-            OBJECT_EXTENDER_GETTER(UniversityExtender, university),
-            OBJECT_EXTENDER_GETTER(WarehousesExtender, warehouses),
-            //OBJECT_EXTENDER_GETTER(WateringPlaceExtender, wateringPlace),
-            OBJECT_EXTENDER_GETTER(WoGObjectsExtender, wog),
-
-            // JS Objects
-            OBJECT_EXTENDER_GETTER(AncientLampExtender, ancientLamp),
-            OBJECT_EXTENDER_GETTER(DreamTeacherExtender, dreamTeacher),
-            OBJECT_EXTENDER_GETTER(GraveExtender, grave),
-            OBJECT_EXTENDER_GETTER(HermitsShackExtender, hermitsShack),
-            OBJECT_EXTENDER_GETTER(HillFortExtender, hillFort),
-            OBJECT_EXTENDER_GETTER(JunkmanExtender, junkman),
-            OBJECT_EXTENDER_GETTER(MineralSpringExtender, mineralSpring),
-            OBJECT_EXTENDER_GETTER(ObservatoryExtender, observatory),
-            OBJECT_EXTENDER_GETTER(ProspectorExtender, prospector),
-            OBJECT_EXTENDER_GETTER(SkeletonTransformerExtender, skeletonTransformer),
-            OBJECT_EXTENDER_GETTER(TempleOfLoyaltyExtender, templeOfLoyalty),
-            OBJECT_EXTENDER_GETTER(TownGateExtender, townGate),
-            OBJECT_EXTENDER_GETTER(TrailblazerExtender, trailblazer),
-            OBJECT_EXTENDER_GETTER(WarlocksLabExtender, warlocksLab),
-            OBJECT_EXTENDER_GETTER(WateringPlaceExtender, wateringPlace)
-        };
-
-        constexpr size_t extendersCount =
-            std::size(extendersList); // sizeof(extendersList) / sizeof(extender::ObjectExtender*);
-
-        static_assert(extendersCount == 23, "Unexpected number of extenders");
-        //! Get the extenders and initialize
-        for (size_t i = 0; i < extendersCount; i++)
-        {
-            mgr->AddExtender(extendersList[i]);
-        }
-    }
-
+    ExtendersInitializer::InitObjectExtenders();
     //! Set patches for the RMG_SettingsDlg
     rmgdlg::RMG_SettingsDlg::SetPatches(_PI);
 
