@@ -195,6 +195,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
             ExtraHints();
             // HD-mod patches
             //HdModPatches();
+            // Water objects unvisitable-triggers
+            WaterObjectsPassability();
         }
         break;
     }
