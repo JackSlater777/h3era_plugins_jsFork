@@ -6,6 +6,8 @@ namespace seaBarrel
 
 SeaBarrelExtender::SeaBarrelExtender() : ObjectExtender(globalPatcher->CreateInstance("EraPlugin.SeaBarrelExtender.daemon_n"))
 {
+    objectType = extender::HOTA_PICKUPABLE_OBJECT_TYPE;
+    objectSubtype = SEA_BARREL_OBJECT_SUBTYPE;
     CreatePatches();
 }
 
@@ -13,8 +15,9 @@ SeaBarrelExtender::~SeaBarrelExtender()
 {
 }
 
-BOOL SeaBarrelExtender::SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *hero, const H3Player *player,
-                                        int &aiMapItemWeight, int* moveDistance, const H3Position pos) const noexcept
+BOOL SeaBarrelExtender::SetAiMapItemWeight(
+    H3MapItem *mapItem, H3Hero *hero, const H3Player *player,
+    int &aiMapItemWeight, int* moveDistance, const H3Position pos) const noexcept
 {
     if (auto objSetup = H3MapItemSeaBarrel::GetSeaBarrel(mapItem))
     {
@@ -31,50 +34,28 @@ BOOL SeaBarrelExtender::SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *hero, con
     return false;
 }
 
-void ShowMessage(const H3MapItem* mapItem, const int resType, const int resNum)
-{
-    const bool skipMapMessage = globalPatcher->VarValue<int>("HD.UI.AdvMgr.SkipMapMsgs");
-
-    H3String objName = H3String::Format("{%s}", RMGObjectInfo::GetObjectName(mapItem));
-
-    if (skipMapMessage)
-    {
-        if (resNum < 1)
-        {
-            objName.Append(
-                EraJS::read(H3String::Format("RMG.objectGeneration.%d.%d.text.visited", mapItem->objectType, mapItem->objectSubtype)
-                    .String()));
-        }
-
-        THISCALL_4(void, 0x415FC0, P_AdventureMgr->Get(), objName.String(), resType, resNum);
-    }
-    else
-    {
-        objName.Append(EraJS::read(
-            resNum > 0 ? H3String::Format("RMG.objectGeneration.%d.%d.text.visit", mapItem->objectType, mapItem->objectSubtype).String()
-            : H3String::Format("RMG.objectGeneration.%d.%d.text.visited", mapItem->objectType, mapItem->objectSubtype).String()));
-
-        H3PictureCategories pics(ePictureCategories(resType), resNum);
-        h3::libc::sprintf(h3_TextBuffer, "%s", objName.String());
-        H3Messagebox::Show(pics);
-    }
-}
-
 BOOL SeaBarrelExtender::VisitMapItem(H3Hero *hero, H3MapItem *mapItem, const H3Position pos,
                                   const BOOL isHuman) const noexcept
 {
     if (const auto seaBarrel = H3MapItemSeaBarrel::GetSeaBarrel(mapItem))
     {
-        if (isHuman)
+        int resType = seaBarrel->resType;
+        int resQty = seaBarrel->resQty;
+        
+        if (resQty)
         {
-            ShowMessage(mapItem, seaBarrel->resQty > 0 ? seaBarrel->resType : -1, seaBarrel->resQty > 0 ? seaBarrel->resQty : -1);
+            if (isHuman)
+            {
+                FASTCALL_12(void, 0x4F6C00, SeaBarrelExtender::GetVisitMessage().String(),
+                    1, -1, -1, resType, resQty, -1, 0, -1, 0, -1, -777);
+            }
+            // add resource
+            THISCALL_3(void, 0x4E3870, hero, resType, resQty);
         }
-
-        // Не пустая
-        if (seaBarrel->resQty > 0)
+        else if (isHuman)
         {
-            // add resourcse
-            THISCALL_3(void, 0x4E3870, hero, seaBarrel->resType, seaBarrel->resQty);
+            FASTCALL_12(void, 0x4F6C00, SeaBarrelExtender::GetVisitedMessage().String(),
+                1, -1, -1, -1, 0, -1, 0, -1, 0, -1, -777);
         }
 
         // Delete the object

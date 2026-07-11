@@ -152,8 +152,6 @@ JetsamExtender& JetsamExtender::Get()
     if (!instance)
     {
         instance = new JetsamExtender();
-        //instance->objectType = extender::HOTA_PICKUPABLE_OBJECT_TYPE;
-        //instance->objectSubtype = JETSAM_OBJECT_SUBTYPE;
     }
     
     return *instance;

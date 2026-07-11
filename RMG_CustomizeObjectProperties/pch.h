@@ -30,7 +30,6 @@ constexpr UINT16 H3_MAX_OBJECTS = h3::limits::OBJECTS;
 #include "ObjectExtenderManager.h"
 
 // JS objects headers
-#include "Globals.h"
 #include "ObjectExtenders/H3MapItemNew.h"
 #include "ObjectExtenders/ExtraHints.h"
 #include "ObjectExtenders/FlagsExtender.h"

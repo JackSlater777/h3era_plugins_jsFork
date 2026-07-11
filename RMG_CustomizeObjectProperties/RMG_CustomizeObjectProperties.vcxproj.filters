@@ -40,7 +40,6 @@
     <ClCompile Include="ObjectExtenders\WaterObjectsPassability.cpp" />
     <ClCompile Include="ObjectExtenders\SeaBarrelExtender.cpp" />
     <ClCompile Include="ObjectExtenders\JetsamExtender.cpp" />
-    <ClCompile Include="Globals.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdditionalProperties.h" />
@@ -81,6 +80,5 @@
     <ClInclude Include="ObjectExtenders\WaterObjectsPassability.h" />
     <ClInclude Include="ObjectExtenders\SeaBarrelExtender.h" />
     <ClInclude Include="ObjectExtenders\JetsamExtender.h" />
-    <ClInclude Include="Globals.h" />
   </ItemGroup>
 </Project>

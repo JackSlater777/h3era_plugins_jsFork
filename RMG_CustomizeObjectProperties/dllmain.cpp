@@ -101,8 +101,6 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
             _PI->WriteLoHook(0x4EDE42, CrBanksTxt_BeforeLoad);
 
 
-            // Globals, such as HD-mode skip messages
-            Globals_Init();
             // Module with flags extenders
             FlagsExtender_Init();
             // Extra hints
