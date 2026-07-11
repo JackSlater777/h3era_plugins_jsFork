@@ -13,7 +13,7 @@ struct H3MapItemSeaBarrel
     static inline H3MapItemSeaBarrel* GetSeaBarrel(H3MapItem* mapItem) noexcept;
 };
 
-class SeaBarrelExtender : public extender::ObjectExtender
+class SeaBarrelExtender : public H3PickupableObject
 {
     static SeaBarrelExtender* instance;
 

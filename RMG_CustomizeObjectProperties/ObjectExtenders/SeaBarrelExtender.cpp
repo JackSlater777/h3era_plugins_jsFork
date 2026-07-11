@@ -4,7 +4,9 @@
 namespace seaBarrel
 {
 
-SeaBarrelExtender::SeaBarrelExtender() : ObjectExtender(globalPatcher->CreateInstance("EraPlugin.SeaBarrelExtender.daemon_n"))
+SeaBarrelExtender::SeaBarrelExtender()
+    : H3PickupableObject(
+        globalPatcher->CreateInstance("EraPlugin.SeaBarrelExtender.daemon_n"))
 {
     objectType = extender::HOTA_PICKUPABLE_OBJECT_TYPE;
     objectSubtype = SEA_BARREL_OBJECT_SUBTYPE;
@@ -46,7 +48,7 @@ BOOL SeaBarrelExtender::VisitMapItem(H3Hero *hero, H3MapItem *mapItem, const H3P
         {
             if (isHuman)
             {
-                FASTCALL_12(void, 0x4F6C00, SeaBarrelExtender::GetVisitMessage().String(),
+                FASTCALL_12(void, 0x4F6C00, SeaBarrelExtender::GetVisitingMessage().String(),
                     1, -1, -1, resType, resQty, -1, 0, -1, 0, -1, -777);
             }
             // add resource
@@ -54,7 +56,7 @@ BOOL SeaBarrelExtender::VisitMapItem(H3Hero *hero, H3MapItem *mapItem, const H3P
         }
         else if (isHuman)
         {
-            FASTCALL_12(void, 0x4F6C00, SeaBarrelExtender::GetVisitedMessage().String(),
+            FASTCALL_12(void, 0x4F6C00, SeaBarrelExtender::GetEmptyMessage().String(),
                 1, -1, -1, -1, 0, -1, 0, -1, 0, -1, -777);
         }
 
@@ -116,7 +118,8 @@ void SeaBarrelExtender::CreatePatches()
 
 inline H3MapItemSeaBarrel* H3MapItemSeaBarrel::GetSeaBarrel(H3MapItem *mapItem) noexcept
 {
-    if (mapItem && mapItem->objectType == extender::HOTA_PICKUPABLE_OBJECT_TYPE && mapItem->objectSubtype == SEA_BARREL_OBJECT_SUBTYPE)
+    if (mapItem && mapItem->objectType == extender::HOTA_PICKUPABLE_OBJECT_TYPE &&
+        mapItem->objectSubtype == SEA_BARREL_OBJECT_SUBTYPE)
     {
         return reinterpret_cast<H3MapItemSeaBarrel*>(&mapItem->setup);
     }
@@ -132,7 +135,6 @@ H3RmgObjectGenerator* SeaBarrelExtender::CreateRMGObjectGen(const RMGObjectInfo 
     }
     return nullptr;
 }
-
 
 SeaBarrelExtender* SeaBarrelExtender::instance = nullptr;
 

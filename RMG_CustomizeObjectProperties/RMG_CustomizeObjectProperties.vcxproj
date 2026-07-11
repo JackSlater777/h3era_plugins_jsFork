@@ -52,6 +52,7 @@
   <!-- Локальные настройки пользователя в Directory.Build.props.user -->
   <ItemGroup>
     <ClInclude Include="AdditionalProperties.h" />
+    <ClInclude Include="BaseClasses.h" />
     <ClInclude Include="ObjectExtenderManager.h" />
     <ClInclude Include="ObjectExtenders\AncientLampExtender.h" />
     <ClInclude Include="ObjectExtenders\CreatureBankManager.h" />

@@ -115,22 +115,23 @@ class ObjectExtender
         objName->Append(h3_TextBuffer);
     }
 
-    H3String GetVisitMessage() const
+    H3String GetStringMessage(LPCSTR key) const
     {
         H3String message = H3String::Format("{%s}", RMGObjectInfo::GetObjectName(this->objectType, this->objectSubtype));
         message.Append(
-            EraJS::read(H3String::Format(visit_key, this->objectType, this->objectSubtype)
+            EraJS::read(H3String::Format(key, this->objectType, this->objectSubtype)
                 .String()));
         return message;
     }
 
+    H3String GetVisitingMessage() const
+    {
+        return GetStringMessage(visit_key);
+    }
+
     H3String GetVisitedMessage() const
     {
-        H3String message = H3String::Format("{%s}", RMGObjectInfo::GetObjectName(this->objectType, this->objectSubtype));
-        message.Append(
-            EraJS::read(H3String::Format(visited_key, this->objectType, this->objectSubtype)
-                .String()));
-        return message;
+        return GetStringMessage(visited_key);
     }
 
   public:

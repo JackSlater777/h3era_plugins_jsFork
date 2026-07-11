@@ -80,5 +80,6 @@
     <ClInclude Include="ObjectExtenders\WaterObjectsPassability.h" />
     <ClInclude Include="ObjectExtenders\SeaBarrelExtender.h" />
     <ClInclude Include="ObjectExtenders\JetsamExtender.h" />
+    <ClInclude Include="BaseClasses.h" />
   </ItemGroup>
 </Project>

@@ -1,11 +1,11 @@
 #pragma once
 
-
-
 namespace jetsam
 {
 // 145
 constexpr int JETSAM_OBJECT_SUBTYPE = 2;
+
+constexpr LPCSTR visit_1state_key = "RMG.objectGeneration.%d.%d.text.visit1state";
 constexpr LPCSTR visit_2state_key = "RMG.objectGeneration.%d.%d.text.visit2state";
 constexpr LPCSTR visit_3state_key = "RMG.objectGeneration.%d.%d.text.visit3state";
 
@@ -17,7 +17,7 @@ struct H3MapItemJetsam
     static inline H3MapItemJetsam* GetJetsam(H3MapItem* mapItem) noexcept;
 };
 
-class JetsamExtender : public extender::ObjectExtender
+class JetsamExtender : public H3PickupableObject
 {
     static JetsamExtender* instance;
 
@@ -39,21 +39,25 @@ class JetsamExtender : public extender::ObjectExtender
   public:
     static JetsamExtender&Get();
 
-    H3String GetVisitMessageState2() const
+
+    H3String GetEmptyMessage() const
     {
-        H3String message = H3String::Format("{%s}", RMGObjectInfo::GetObjectName(this->objectType, this->objectSubtype));
-        message.Append(
-            EraJS::read(H3String::Format(visit_2state_key, this->objectType, this->objectSubtype)
-                .String()));
-        return message;
+        return GetStringMessage(empty_key);
     }
-    H3String GetVisitMessageState3() const
+
+    H3String GetVisitingState1Message() const
     {
-        H3String message = H3String::Format("{%s}", RMGObjectInfo::GetObjectName(this->objectType, this->objectSubtype));
-        message.Append(
-            EraJS::read(H3String::Format(visit_3state_key, this->objectType, this->objectSubtype)
-                .String()));
-        return message;
+        return GetStringMessage(visit_1state_key);
+    }
+
+    H3String GetVisitingState2Message() const
+    {
+        return GetStringMessage(visit_2state_key);
+    }
+
+    H3String GetVisitingState3Message() const
+    {
+        return GetStringMessage(visit_3state_key);
     }
 };
 

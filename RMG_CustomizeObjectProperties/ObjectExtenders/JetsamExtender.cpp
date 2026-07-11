@@ -4,7 +4,9 @@
 namespace jetsam
 {
 
-JetsamExtender::JetsamExtender() : ObjectExtender(globalPatcher->CreateInstance("EraPlugin.JetsamExtender.daemon_n"))
+JetsamExtender::JetsamExtender()
+    : H3PickupableObject(
+        globalPatcher->CreateInstance("EraPlugin.JetsamExtender.daemon_n"))
 {
     objectType = extender::HOTA_PICKUPABLE_OBJECT_TYPE;
     objectSubtype = JETSAM_OBJECT_SUBTYPE;
@@ -39,7 +41,8 @@ BOOL JetsamExtender::VisitMapItem(H3Hero *hero, H3MapItem *mapItem, const H3Posi
         case 0:
             if (isHuman)
             {
-                FASTCALL_12(void, 0x4F6C00, JetsamExtender::GetVisitedMessage().String(),
+                FASTCALL_12(void, 0x4F6C00,
+                    JetsamExtender::GetEmptyMessage().String(),
                     1, -1, -1, -1, 0, -1, 0, -1, 0, -1, -777);
             }  
             break;
@@ -47,7 +50,8 @@ BOOL JetsamExtender::VisitMapItem(H3Hero *hero, H3MapItem *mapItem, const H3Posi
         case 1:
             if (isHuman)
             {
-                FASTCALL_12(void, 0x4F6C00, JetsamExtender::GetVisitMessage().String(),
+                FASTCALL_12(void, 0x4F6C00,
+                    JetsamExtender::GetVisitingState1Message().String(),
                     1, -1, -1, eResource::ORE, 5, -1, 0, -1, 0, -1, -777);
             }
             // add resource
@@ -57,7 +61,8 @@ BOOL JetsamExtender::VisitMapItem(H3Hero *hero, H3MapItem *mapItem, const H3Posi
         case 2:
             if (isHuman)
             {
-                FASTCALL_12(void, 0x4F6C00, JetsamExtender::GetVisitMessageState2().String(),
+                FASTCALL_12(void, 0x4F6C00,
+                    JetsamExtender::GetVisitingState2Message().String(),
                     1, -1, -1, eResource::ORE, 5, eResource::GOLD, 200, -1, 0, -1, -777);
             }
             // add resource
@@ -68,7 +73,8 @@ BOOL JetsamExtender::VisitMapItem(H3Hero *hero, H3MapItem *mapItem, const H3Posi
         case 3:
             if (isHuman)
             {
-                FASTCALL_12(void, 0x4F6C00, JetsamExtender::GetVisitMessageState3().String(),
+                FASTCALL_12(void, 0x4F6C00,
+                    JetsamExtender::GetVisitingState3Message().String(),
                     1, -1, -1, eResource::ORE, 10, eResource::GOLD, 500, -1, 0, -1, -777);
             }
             // add resource   

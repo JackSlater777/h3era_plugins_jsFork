@@ -1,14 +1,14 @@
+#include "../pch.h"
 #include "WateringPlaceExtender.h"
 
 namespace wateringPlace
 {
 WateringPlaceExtender::WateringPlaceExtender()
-    : ObjectExtender(globalPatcher->CreateInstance("EraPlugin.WateringPlaceExtender.daemon_n"))
+    : ObjectExtender(
+        globalPatcher->CreateInstance("EraPlugin.WateringPlaceExtender.daemon_n"))
 {
-
-    objectType = eHotaObject::ACTIVE;
-    objectSubtype = eHotaObjectActiveType::WATERING_PLACE;
-
+    objectType = extender::HOTA_OBJECT_TYPE;
+    objectSubtype = WATERING_PLACE_OBJECT_SUBTYPE;
     CreatePatches();
 }
 
@@ -16,11 +16,11 @@ WateringPlaceExtender::~WateringPlaceExtender()
 {
 }
 
-BOOL WateringPlaceExtender::SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *hero, const H3Player *player,
-                                               int &aiMapItemWeight, int *moveDistance,
-                                               const H3Position pos) const noexcept
+BOOL WateringPlaceExtender::SetAiMapItemWeight(
+    H3MapItem *mapItem, H3Hero *hero, const H3Player *player,
+    int &aiMapItemWeight, int *moveDistance, const H3Position pos) const noexcept
 {
-    if (H3MapItemWateringPlace::GetFromMapItem(mapItem))
+    if (H3MapItemWateringPlace::GetWateringPlace(mapItem))
     {
         const bool isVisitedByHero = H3MapItemWateringPlace::IsVisitedByHero(hero);
 
@@ -95,7 +95,7 @@ BOOL AskQuestion(const H3MapItem *mapItem)
 BOOL WateringPlaceExtender::VisitMapItem(H3Hero *hero, H3MapItem *mapItem, const H3Position pos,
                                          const BOOL isHuman) const noexcept
 {
-    if (H3MapItemWateringPlace::GetFromMapItem(mapItem))
+    if (H3MapItemWateringPlace::GetWateringPlace(mapItem))
     {
         ProcObjectFlagsVisitedByTeam(hero, objectType, objectSubtype);
 
@@ -135,7 +135,7 @@ BOOL WateringPlaceExtender::SetHintInH3TextBuffer(H3MapItem *mapItem, const H3He
                                                   const BOOL isRightClick) const noexcept
 {
 
-    if (H3MapItemWateringPlace::GetFromMapItem(mapItem))
+    if (H3MapItemWateringPlace::GetWateringPlace(mapItem))
     {
         H3String objName = RMGObjectInfo::GetObjectName(mapItem);
         int teamId = THISCALL_2(int, 0x4A55D0, P_Game->Get(), interactPlayerId);
@@ -176,34 +176,22 @@ _ERH_(OnEveryDay)
     }
 }
 
-
-_LHF_(WateringPlace_HeroReset)
-{
-    int heroId = c->edx; // !!UN:C(hook)/(STRUCT_HOOK_CONTEXT_EDX)/4/?(heroId:y);
-    sprintf(h3_TextBuffer, H3MapItemWateringPlace::ErmVariableFormat, heroId); // ��������� ����� ����������
-    Era::SetAssocVarIntValue(h3_TextBuffer, 0);                                // �������� ����������
-
-    return EXEC_DEFAULT;
-}
-
 void WateringPlaceExtender::CreatePatches()
 {
     if (!m_isInited)
     {
-        Era::RegisterHandler(OnEveryDay, "OnEveryDay");      // ������ ������ ��������� � ��������� �������� � ERA
-        //_pi->WriteLoHook(0x4D89B8, WateringPlace_HeroReset); // 5081528 = 4D89B8 - hero reset // �������� ���������
+        Era::RegisterHandler(OnEveryDay, "OnEveryDay");
 
         m_isInited = true;
     }
 }
 
-H3MapItemWateringPlace *H3MapItemWateringPlace::GetFromMapItem(const H3MapItem *mapItem) noexcept
+inline H3MapItemWateringPlace* H3MapItemWateringPlace::GetWateringPlace(H3MapItem *mapItem) noexcept
 {
     if (mapItem && mapItem->objectType == extender::HOTA_OBJECT_TYPE &&
         mapItem->objectSubtype == WATERING_PLACE_OBJECT_SUBTYPE)
     {
-        // return reinterpret_cast<H3MapItemWateringPlace *>(&mapItem->setup);
-        return const_cast<H3MapItemWateringPlace *>(reinterpret_cast<const H3MapItemWateringPlace *>(&mapItem->setup));
+        return reinterpret_cast<H3MapItemWateringPlace*>(&mapItem->setup);
     }
 
     return nullptr;
@@ -226,4 +214,4 @@ WateringPlaceExtender &WateringPlaceExtender::Get()
         instance = new WateringPlaceExtender();
     return *instance;
 }
-} // namespace wateringPlace
+}
