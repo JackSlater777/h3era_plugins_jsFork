@@ -1636,6 +1636,7 @@ std::vector<GraphicalAttributes> *RMG_SettingsDlg::GetObjectAttributesVectorByOb
     case eObject::WINDMILL:
     case eObject::WITCH_HUT:
 
+    case extender::ERA_OBJECT_TYPE:
     case extender::WAREHOUSE_OBJECT_TYPE:
 
     case extender::HOTA_OBJECT_TYPE:

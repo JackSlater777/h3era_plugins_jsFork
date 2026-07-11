@@ -1,30 +1,34 @@
 #pragma once
 
+
 namespace warlocksLab
 {
+    // type 144, subtype 9
+    constexpr int WARLOCKS_LAB_OBJECT_SUBTYPE = 9;
 
-struct H3MapItemWarlocksLab
-{
+    struct H3MapItemWarlocksLab
+    {
+        // Собственных данных в mapItem->setup пока нет.
+    };
 
-};
+    class WarlocksLabExtender final
+        : public H3ActiveObject<H3MapItemWarlocksLab>
+    {
+    private:
+        static WarlocksLabExtender* instance;
 
-class WarlocksLabExtender : public extender::ObjectExtender
-{
-    WarlocksLabExtender();
+        void CreatePatches() override final;
 
-    virtual ~WarlocksLabExtender();
+        WarlocksLabExtender();
 
-  private:
-    virtual void CreatePatches() override;
-    virtual BOOL VisitMapItem(H3Hero *currentHero, H3MapItem *mapItem, const H3Position pos,
-                              const BOOL isHuman) const noexcept override final;
-    virtual BOOL SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *currentHero, const H3Player *activePlayer,
-                                    int &aiMapItemWeight, int* moveDistance, const H3Position pos) const noexcept override final;
-    virtual H3RmgObjectGenerator* CreateRMGObjectGen(const RMGObjectInfo& objectInfo) const noexcept override final;
-    virtual H3MapItemWarlocksLab* GetFromMapItem(H3MapItem* mapItem) const noexcept;
+        BOOL VisitMapItem(
+            H3Hero* currentHero,
+            H3MapItem* mapItem,
+            H3Position pos,
+            BOOL isHuman
+        ) const noexcept override final;
 
-  public:
-    static WarlocksLabExtender&Get();
-};
-
+    public:
+        static WarlocksLabExtender& Get();
+    };
 }

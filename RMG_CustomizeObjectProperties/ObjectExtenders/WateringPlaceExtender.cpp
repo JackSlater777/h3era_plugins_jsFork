@@ -1,217 +1,188 @@
 #include "../pch.h"
 #include "WateringPlaceExtender.h"
 
+
 namespace wateringPlace
 {
-WateringPlaceExtender::WateringPlaceExtender()
-    : ObjectExtender(
-        globalPatcher->CreateInstance("EraPlugin.WateringPlaceExtender.daemon_n"))
-{
-    objectType = extender::HOTA_OBJECT_TYPE;
-    objectSubtype = WATERING_PLACE_OBJECT_SUBTYPE;
-    CreatePatches();
-}
-
-WateringPlaceExtender::~WateringPlaceExtender()
-{
-}
-
-BOOL WateringPlaceExtender::SetAiMapItemWeight(
-    H3MapItem *mapItem, H3Hero *hero, const H3Player *player,
-    int &aiMapItemWeight, int *moveDistance, const H3Position pos) const noexcept
-{
-    if (H3MapItemWateringPlace::GetWateringPlace(mapItem))
+    BOOL H3MapItemWateringPlace::IsVisitedByHero(const H3Hero* hero) noexcept
     {
-        const bool isVisitedByHero = H3MapItemWateringPlace::IsVisitedByHero(hero);
+        sprintf(h3_TextBuffer, ErmVariableFormat, hero->id);
 
-        if (isVisitedByHero
-            //|| THISCALL_2(BOOL8, 0x529B70, mapItem, player->ownerID) && (mapItem->setup & 1) != 0
-            || *moveDistance >= 0 && *moveDistance > hero->movement
-            || hero->movement >= 500
-            )
+        return Era::GetAssocVarIntValue(h3_TextBuffer);
+    }
+    void H3MapItemWateringPlace::SetAsVisited(H3Hero* hero) noexcept
+    {
+        sprintf(newMapItem::buffer, ErmVariableFormat, hero->id);
+        Era::SetAssocVarIntValue(newMapItem::buffer, 1);
+    }
+    void H3MapItemWateringPlace::SetAsNotVisited(H3Hero* hero) noexcept
+    {
+        sprintf(newMapItem::buffer, ErmVariableFormat, hero->id);
+        Era::SetAssocVarIntValue(newMapItem::buffer, 0);
+    }
+
+    _ERH_(OnEveryDay)
+    {
+        for (const auto heroId : P_Game->players[P_CurrentPlayerID].heroIDs)
         {
-            aiMapItemWeight = 0;
-            return true;
+            auto hero = &P_Game->heroes[heroId];
+
+            if (H3MapItemWateringPlace::IsVisitedByHero(hero))
+            {
+                H3MapItemWateringPlace::SetAsNotVisited(hero);
+                hero->movement += WATERING_PLACE_MOVE_POINTS_GIVEN;
+            }
         }
-        *moveDistance = 0;
-        aiMapItemWeight = 10000;
-        return true;
     }
 
-    return false;
-}
-
-BOOL H3MapItemWateringPlace::IsVisitedByHero(const H3Hero *hero) noexcept
-{
-    sprintf(h3_TextBuffer, ErmVariableFormat, hero->id);
-
-    return Era::GetAssocVarIntValue(h3_TextBuffer);
-}
-
-
-void H3MapItemWateringPlace::SetAsVisited(H3Hero* hero) noexcept
-{
-    sprintf(newMapItem::buffer, ErmVariableFormat, hero->id);
-    Era::SetAssocVarIntValue(newMapItem::buffer, 1);
-}
-
-void H3MapItemWateringPlace::SetAsNotVisited(H3Hero* hero) noexcept
-{
-    sprintf(newMapItem::buffer, ErmVariableFormat, hero->id);
-    Era::SetAssocVarIntValue(newMapItem::buffer, 0);
-}
-
-void ShowMessage(const H3MapItem *mapItem)
-{
-    const bool skipMapMessage = globalPatcher->VarValue<int>("HD.UI.AdvMgr.SkipMapMsgs");
-
-    H3String objName = H3String::Format("{%s}", RMGObjectInfo::GetObjectName(mapItem));
-
-    objName.Append(EraJS::read(
-        H3String::Format("RMG.objectGeneration.%d.%d.text.visited", mapItem->objectType, mapItem->objectSubtype)
-            .String()));
-
-    if (skipMapMessage)
+    void WateringPlaceExtender::CreatePatches()
     {
-        THISCALL_4(void, 0x415FC0, P_AdventureMgr->Get(), objName.String(), -1, -1);
+        static bool handlerRegistered = false;
+        if (handlerRegistered) return;
+        Era::RegisterHandler(OnEveryDay, "OnEveryDay");
+        handlerRegistered = true;
     }
-    else
+
+    WateringPlaceExtender::WateringPlaceExtender()
+        : H3ActiveObject<H3MapItemWateringPlace>(
+            "EraPlugin.WateringPlaceExtender.daemon_n",
+            extender::HOTA_OBJECT_TYPE,
+            WATERING_PLACE_OBJECT_SUBTYPE)
     {
-        H3Messagebox::Show(objName);
+        CreatePatches();
     }
-}
 
-BOOL AskQuestion(const H3MapItem *mapItem)
-{
-    H3String objName = H3String::Format("{%s}", RMGObjectInfo::GetObjectName(mapItem));
-
-    objName.Append(EraJS::read(
-        H3String::Format("RMG.objectGeneration.%d.%d.text.visit", mapItem->objectType, mapItem->objectSubtype)
-            .String()));
-
-    return H3Messagebox::Choice(objName);
-}
-
-BOOL WateringPlaceExtender::VisitMapItem(H3Hero *hero, H3MapItem *mapItem, const H3Position pos,
-                                         const BOOL isHuman) const noexcept
-{
-    if (H3MapItemWateringPlace::GetWateringPlace(mapItem))
+    WateringPlaceExtender* WateringPlaceExtender::instance = nullptr;
+    WateringPlaceExtender& WateringPlaceExtender::Get()
     {
-        ProcObjectFlagsVisitedByTeam(hero, objectType, objectSubtype);
+        if (!instance) instance = new WateringPlaceExtender();
+        return *instance;
+    }
 
-        const bool isVisitedByHero = H3MapItemWateringPlace::IsVisitedByHero(hero);
-
-        if (!isVisitedByHero)
+    BOOL WateringPlaceExtender::SetHintInH3TextBuffer(H3MapItem* mapItem, const H3Hero* hero, const int interactPlayerId,
+        const BOOL isRightClick) const noexcept
+    {
+        if (GetFromMapItem(mapItem))
         {
-            BOOL agreed = !isHuman;
-            if (isHuman)
+            H3String objName = RMGObjectInfo::GetObjectName(mapItem);
+            int teamId = THISCALL_2(int, 0x4A55D0, P_Game->Get(), interactPlayerId);
+            BOOL teamVisited = IsObjectVisitedByTeam(objectType, objectSubtype, teamId);
+
+            // Add extra hint if object is visited at least once by the team
+            if (teamVisited)
             {
-                agreed = AskQuestion(mapItem);
+                AddExtraInfoHint(&objName, isRightClick);
             }
-            if (agreed)
+
+            // Add "Visited/Not visited" hint
+            if (hero)
             {
-                H3MapItemWateringPlace::SetAsVisited(hero);
-                hero->movement = 0;
-                hero->maxMovement += MOVE_POINTS_GIVEN;
-                hero->RecalculateMovement();
-                sprintf(h3_TextBuffer, H3MapItemWateringPlace::ErmVariableFormat,
-                        hero->id);                          // ��������� ����� ����������
-                Era::SetAssocVarIntValue(h3_TextBuffer, 1); // �������� ����������, ��� ������ �������
+                const bool isVisitedByHero = H3MapItemWateringPlace::IsVisitedByHero(hero);
+                AddHeroVisitedHint(&objName, isRightClick, isVisitedByHero);
             }
+
+            sprintf(h3_TextBuffer, "%s", objName.String());
 
             return true;
         }
 
-        if (isHuman)
-        {
-            ShowMessage(mapItem);
-        }
+        return false;
     }
 
-    return false;
-}
-
-BOOL WateringPlaceExtender::SetHintInH3TextBuffer(H3MapItem *mapItem, const H3Hero *hero, const int interactPlayerId,
-                                                  const BOOL isRightClick) const noexcept
-{
-
-    if (H3MapItemWateringPlace::GetWateringPlace(mapItem))
+    BOOL WateringPlaceExtender::VisitMapItem(H3Hero* hero, H3MapItem* mapItem, const H3Position pos,
+        const BOOL isHuman) const noexcept
     {
-        H3String objName = RMGObjectInfo::GetObjectName(mapItem);
-        int teamId = THISCALL_2(int, 0x4A55D0, P_Game->Get(), interactPlayerId);
-        BOOL teamVisited = IsObjectVisitedByTeam(objectType, objectSubtype, teamId);
-
-        // Add extra hint if object is visited at least once by the team
-        if (teamVisited)
+        if (GetFromMapItem(mapItem))
         {
-            AddExtraInfoHint(&objName, isRightClick);
+            // H3MapItem::SetAsVisited
+            //INT16 playerId = static_cast<INT16>(hero->owner);
+            //THISCALL_2(void, 0x4FC620, mapItem, playerId);
+
+            const bool isVisitedByHero = H3MapItemWateringPlace::IsVisitedByHero(hero);
+
+            if (isVisitedByHero)
+            {
+                if (isHuman)
+                {
+                    FASTCALL_12(void, 0x4F6C00, this->GetVisitedMessage().String(),
+                        1, -1, -1, -1, 0, -1, 0, -1, 0, -1, -777);
+                }
+            }
+            // What is it?
+            //else if ((mapItem->setup & 1) != 0)
+            //{
+            //    if (isHuman)
+            //    {
+            //        FASTCALL_12(void, 0x4F6C00, this->GetVisitedMessage().String(),
+            //            1, -1, -1, -1, 0, -1, 0, -1, 0, -1, -777);
+            //    }
+            //}
+            else
+            {
+                ProcObjectFlagsVisitedByTeam(hero, objectType, objectSubtype);
+
+                if (isHuman)
+                {
+                    FASTCALL_12(void, 0x4F6C00, this->GetVisitingMessage().String(),
+                        2, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
+
+                    if (P_WindowManager->resultItemID != eControlId::CANCEL)
+                    {
+                        hero->movement = 0;
+                        H3MapItemWateringPlace::SetAsVisited(hero);
+
+                        if (hero->maxMovement < MAX_HERO_MOVEMENT_POINTS)
+                        {
+                            hero->maxMovement += WATERING_PLACE_MOVE_POINTS_GIVEN;
+                            ClampMovementPoints(hero->maxMovement);
+                        }
+                        
+                        // H3AdventureMgrDlg::RedrawHeroesSlots
+                        THISCALL_4(void, 0x4032E0, P_AdventureManager->dlg, -1, 1, 1);
+                    }
+                }
+                // AI::H3Hero::CalculateMapPosWeight_
+                else if (hero->dest_x == -1 && THISCALL_2(int, 0x52C1F0, hero, pos) > 0)
+                {
+                    hero->movement = 0;
+                    H3MapItemWateringPlace::SetAsVisited(hero);
+
+                    if (hero->maxMovement < MAX_HERO_MOVEMENT_POINTS)
+                    {
+                        hero->maxMovement += WATERING_PLACE_MOVE_POINTS_GIVEN;
+                        ClampMovementPoints(hero->maxMovement);
+                    }
+                }
+            }
+
+            return true;
         }
 
-        // Add "Visited/Not visited" hint
-        if (hero)
+        return false;
+    }
+
+    BOOL WateringPlaceExtender::SetAiMapItemWeight(
+        H3MapItem* mapItem, H3Hero* hero, const H3Player* player,
+        int& aiMapItemWeight, int* moveDistance, const H3Position pos) const noexcept
+    {
+        if (GetFromMapItem(mapItem))
         {
             const bool isVisitedByHero = H3MapItemWateringPlace::IsVisitedByHero(hero);
-            AddHeroVisitedHint(&objName, isRightClick, isVisitedByHero);
+
+            if (isVisitedByHero
+                //|| THISCALL_2(BOOL8, 0x529B70, mapItem, player->ownerID) && (mapItem->setup & 1) != 0
+                || *moveDistance >= 0 && *moveDistance > hero->movement
+                || hero->movement >= 500
+                )
+            {
+                aiMapItemWeight = 0;
+                return true;
+            }
+            *moveDistance = 0;
+            aiMapItemWeight = 10000;
+            return true;
         }
 
-        sprintf(h3_TextBuffer, "%s", objName.String());
-
-        return true;
+        return false;
     }
-
-    return false;
-}
-
-_ERH_(OnEveryDay)
-{
-    for (const auto heroId : P_Game->players[P_CurrentPlayerID].heroIDs)
-    {
-        auto hero = &P_Game->heroes[heroId];
-
-        if (H3MapItemWateringPlace::IsVisitedByHero(hero))
-        {
-            H3MapItemWateringPlace::SetAsNotVisited(hero);
-            hero->movement += MOVE_POINTS_GIVEN;
-        }
-    }
-}
-
-void WateringPlaceExtender::CreatePatches()
-{
-    if (!m_isInited)
-    {
-        Era::RegisterHandler(OnEveryDay, "OnEveryDay");
-
-        m_isInited = true;
-    }
-}
-
-inline H3MapItemWateringPlace* H3MapItemWateringPlace::GetWateringPlace(H3MapItem *mapItem) noexcept
-{
-    if (mapItem && mapItem->objectType == extender::HOTA_OBJECT_TYPE &&
-        mapItem->objectSubtype == WATERING_PLACE_OBJECT_SUBTYPE)
-    {
-        return reinterpret_cast<H3MapItemWateringPlace*>(&mapItem->setup);
-    }
-
-    return nullptr;
-}
-
-H3RmgObjectGenerator *WateringPlaceExtender::CreateRMGObjectGen(const RMGObjectInfo &objectInfo) const noexcept
-{
-    if (objectInfo.type == extender::HOTA_OBJECT_TYPE && objectInfo.subtype == WATERING_PLACE_OBJECT_SUBTYPE)
-    {
-        return extender::ObjectExtenderManager::CreateDefaultH3RmgObjectGenerator(objectInfo);
-    }
-    return nullptr;
-}
-
-WateringPlaceExtender *WateringPlaceExtender::instance = nullptr;
-
-WateringPlaceExtender &WateringPlaceExtender::Get()
-{
-    if (!instance)
-        instance = new WateringPlaceExtender();
-    return *instance;
-}
 }

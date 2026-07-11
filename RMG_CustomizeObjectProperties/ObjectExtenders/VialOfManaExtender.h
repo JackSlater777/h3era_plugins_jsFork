@@ -1,24 +1,25 @@
 #pragma once
 
 
-namespace seaBarrel
+namespace vialOfMana
 {
-    // 145, subtype 1
-    constexpr int SEA_BARREL_OBJECT_SUBTYPE = 1;
+    // 145, subtype 3
+    constexpr int VIAL_OF_MANA_OBJECT_SUBTYPE = 3;
+    constexpr int MIN_MANA = 30;
+    constexpr int MAX_MANA = 60;
 
-    struct H3MapItemSeaBarrel
+    struct H3MapItemVialOfMana
     {
-        INT16 resType;
-        INT16 resQty;
+        INT32 manaPts;
     };
 
-    class SeaBarrelExtender final
-        : public H3ActiveObject<H3MapItemSeaBarrel>
+    class VialOfManaExtender final
+        : public H3ActiveObject<H3MapItemVialOfMana>
     {
     private:
-        static SeaBarrelExtender* instance;
+        static VialOfManaExtender* instance;
 
-        SeaBarrelExtender();
+        VialOfManaExtender();
 
         BOOL InitNewGameMapItemSetup(
             H3MapItem* mapItem
@@ -41,6 +42,6 @@ namespace seaBarrel
         ) const noexcept override final;
 
     public:
-        static SeaBarrelExtender& Get();
+        static VialOfManaExtender& Get();
     };
 }

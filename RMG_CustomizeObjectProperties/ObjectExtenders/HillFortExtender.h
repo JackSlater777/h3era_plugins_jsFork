@@ -1,27 +1,35 @@
 #pragma once
+
 namespace hillFort
 {
+    // type 35, subtype 1
+    constexpr int HILL_FORT_OBJECT_SUBTYPE = 1;
 
-class HillFortExtender : public extender::ObjectExtender
-{
-  private:
-    static H3MapItem *currentHillFort;
+    struct H3MapHillFort
+    {
 
-  private:
-    HillFortExtender();
-    virtual ~HillFortExtender();
+    };
 
-  protected:
-    virtual void CreatePatches() override;
-    virtual H3RmgObjectGenerator *CreateRMGObjectGen(const RMGObjectInfo &objectInfo) const noexcept override final;
-    virtual BOOL SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *currentHero, const H3Player *activePlayer,
-                                    int &aiMapItemWeight, int* moveDistance, const H3Position pos) const noexcept override final;
+    class HillFortExtender final
+        : public H3ActiveObject<H3MapHillFort>
+    {
+    private:
+        static HillFortExtender* instance;
 
-  private:
-    static _LHF_(HillFort_AIMapWeight);
+        void CreatePatches() override final;
 
-  public:
-    static HillFortExtender &Get();
-};
+        HillFortExtender();
 
+        BOOL SetAiMapItemWeight(
+            H3MapItem* mapItem,
+            H3Hero* currentHero,
+            const H3Player* activePlayer,
+            int& aiMapItemWeight,
+            int* moveDistance,
+            H3Position pos
+        ) const noexcept override final;
+
+    public:
+        static HillFortExtender& Get();
+    };
 }

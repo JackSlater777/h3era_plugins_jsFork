@@ -70,7 +70,7 @@ void __stdcall HiHook_H3HeroReset(HiHook* h, H3Hero* hero, INT16 heroId)
 	mineralSpring::H3MapItemMineralSpring::SetAsNotVisited(hero);
 	trailblazer::H3MapItemTrailblazer::SetAsNotVisited(hero);
 
-	observatory::H3MapItemObservatory::SetAsNotVisited(hero); // ???
+	observatory::H3MapItemObservatory::SetAsNotVisited(hero);
 
 	grave::H3MapItemGrave::SetAsNotVisited(hero);
 }

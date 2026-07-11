@@ -76,6 +76,7 @@
     <ClInclude Include="ObjectExtenders\TownGateExtender.h" />
     <ClInclude Include="ObjectExtenders\TrailblazerExtender.h" />
     <ClInclude Include="ObjectExtenders\UniversityExtender.h" />
+    <ClInclude Include="ObjectExtenders\VialOfManaExtender.h" />
     <ClInclude Include="ObjectExtenders\WarlocksLab.h" />
     <ClInclude Include="ObjectExtenders\WaterObjectsPassability.h" />
     <ClInclude Include="SoundManager.h" />
@@ -119,6 +120,7 @@
     <ClCompile Include="ObjectExtenders\TownGateExtender.cpp" />
     <ClCompile Include="ObjectExtenders\TrailblazerExtender.cpp" />
     <ClCompile Include="ObjectExtenders\UniversityExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\VialOfManaExtender.cpp" />
     <ClCompile Include="ObjectExtenders\WarlocksLab.cpp" />
     <ClCompile Include="ObjectExtenders\WaterObjectsPassability.cpp" />
     <ClCompile Include="SoundManager.cpp" />

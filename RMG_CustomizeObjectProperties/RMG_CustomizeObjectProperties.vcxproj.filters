@@ -18,7 +18,6 @@
     <ClCompile Include="ObjectExtenders\JunkmanExtender.cpp" />
     <ClCompile Include="ObjectExtenders\MineralSpringExtender.cpp" />
     <ClCompile Include="ObjectExtenders\ObservatoryExtender.cpp" />
-    <ClCompile Include="ObjectExtenders\ProspectorExtender.cpp" />
     <ClCompile Include="ObjectExtenders\SkeletonTransformerExtender.cpp" />
     <ClCompile Include="ObjectExtenders\SpellMarketExtender.cpp" />
     <ClCompile Include="ObjectExtenders\TempleOfLoyaltyExtender.cpp" />
@@ -40,6 +39,8 @@
     <ClCompile Include="ObjectExtenders\WaterObjectsPassability.cpp" />
     <ClCompile Include="ObjectExtenders\SeaBarrelExtender.cpp" />
     <ClCompile Include="ObjectExtenders\JetsamExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\ProspectorExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\VialOfManaExtender.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdditionalProperties.h" />
@@ -56,7 +57,6 @@
     <ClInclude Include="ObjectExtenders\JunkmanExtender.h" />
     <ClInclude Include="ObjectExtenders\MineralSpringExtender.h" />
     <ClInclude Include="ObjectExtenders\ObservatoryExtender.h" />
-    <ClInclude Include="ObjectExtenders\ProspectorExtender.h" />
     <ClInclude Include="ObjectExtenders\SkeletonTransformerExtender.h" />
     <ClInclude Include="ObjectExtenders\SpellMarketExtender.h" />
     <ClInclude Include="ObjectExtenders\TempleOfLoyaltyExtender.h" />
@@ -81,5 +81,7 @@
     <ClInclude Include="ObjectExtenders\SeaBarrelExtender.h" />
     <ClInclude Include="ObjectExtenders\JetsamExtender.h" />
     <ClInclude Include="BaseClasses.h" />
+    <ClInclude Include="ObjectExtenders\ProspectorExtender.h" />
+    <ClInclude Include="ObjectExtenders\VialOfManaExtender.h" />
   </ItemGroup>
 </Project>

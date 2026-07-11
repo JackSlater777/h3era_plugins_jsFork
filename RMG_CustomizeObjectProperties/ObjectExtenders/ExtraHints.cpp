@@ -120,6 +120,8 @@ BOOL ShowObjectHint(LoHook* h, HookContext* c, BOOL isRightClick)
 
 void ProcObjectFlagsVisitedByTeam(H3Hero* hero, INT32 objType, INT32 objSubtype)
 {
+    // 10125A10
+
     H3Game* game = P_Game->Get();
     int teamId = game->GetPlayerTeam(hero->owner);
 

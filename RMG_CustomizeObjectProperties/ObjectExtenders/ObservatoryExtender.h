@@ -1,38 +1,54 @@
 #pragma once
 
-namespace observatory
-{
-constexpr int VISION_RADIUS_GIVEN = 2;
 
-struct H3MapItemObservatory
-{
-    static constexpr LPCSTR ErmVariableFormat = "observatory_%d"; //heroid
+namespace observatory {
+    // type 146, subtype 1
+    constexpr int WATER_OBSERVATORY_OBJECT_SUBTYPE = 1;
+    constexpr int VISION_RADIUS_GIVEN = 2;
 
-  public:
-    static BOOL IsVisitedByHero(H3Hero* hero) noexcept;
-    static void SetAsVisited(H3Hero* hero) noexcept;
-    static void SetAsNotVisited(H3Hero* hero) noexcept;
-};
+    struct H3MapItemObservatory
+    {
+        static constexpr LPCSTR ErmVariableFormat = "observatory_%d"; //heroid
 
-class ObservatoryExtender : public extender::ObjectExtender
-{
-    ObservatoryExtender();
+        static BOOL IsVisitedByHero(H3Hero* hero) noexcept;
+        static void SetAsVisited(H3Hero* hero) noexcept;
+        static void SetAsNotVisited(H3Hero* hero) noexcept;
+    };
 
-    virtual ~ObservatoryExtender();
+    class ObservatoryExtender final
+        : public H3ActiveObject<H3MapItemObservatory>
+    {
+    private:
+        static ObservatoryExtender* instance;
 
-  private:
-    virtual void CreatePatches() override;
-    virtual BOOL SetHintInH3TextBuffer(H3MapItem* mapItem, const H3Hero* currentHero, const int playerId,
-        BOOL isRightClick) const noexcept override final;
-    virtual BOOL VisitMapItem(H3Hero *currentHero, H3MapItem *mapItem, const H3Position pos,
-                              const BOOL isHuman) const noexcept override final;
-    virtual BOOL SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *currentHero, const H3Player *activePlayer,
-                                    int &aiMapItemWeight, int* moveDistance, const H3Position pos) const noexcept override final;
-    virtual H3RmgObjectGenerator *CreateRMGObjectGen(const RMGObjectInfo &objectInfo) const noexcept override final;
-    virtual H3MapItemObservatory* GetFromMapItem(H3MapItem* mapItem) const noexcept;
+        ObservatoryExtender();
 
-  public:
-    static ObservatoryExtender &Get();
-};
+        void CreatePatches() override final;
 
+        BOOL SetHintInH3TextBuffer(
+            H3MapItem* mapItem,
+            const H3Hero* currentHero,
+            int playerId,
+            BOOL isRightClick
+        ) const noexcept override final;
+
+        BOOL VisitMapItem(
+            H3Hero* currentHero,
+            H3MapItem* mapItem,
+            H3Position pos,
+            BOOL isHuman
+        ) const noexcept override final;
+
+        BOOL SetAiMapItemWeight(
+            H3MapItem* mapItem,
+            H3Hero* currentHero,
+            const H3Player* activePlayer,
+            int& aiMapItemWeight,
+            int* moveDistance,
+            H3Position pos
+        ) const noexcept override final;
+
+    public:
+        static ObservatoryExtender& Get();
+    };
 }

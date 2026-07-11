@@ -1,28 +1,41 @@
 #pragma once
 
+
 namespace townGate
 {
-struct H3MapItemTownGate
-{
+    // type 146, subtype 3
+    constexpr int TOWN_GATE_OBJECT_SUBTYPE = 3;
 
-};
+    struct H3MapItemTownGate
+    {
 
-class TownGateExtender : public extender::ObjectExtender
-{
-    TownGateExtender();
+    };
 
-    virtual ~TownGateExtender();
+    class TownGateExtender final
+        : public H3ActiveObject<H3MapItemTownGate>
+    {
+    private:
+        static TownGateExtender* instance;
 
-  private:
-    virtual void CreatePatches() override;
-    virtual BOOL InitNewGameMapItemSetup(H3MapItem* mapItem) const noexcept override final;
-    virtual BOOL SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *currentHero, const H3Player *activePlayer,
-                                    int &aiMapItemWeight, int* moveDistance, const H3Position pos) const noexcept override final;
-    virtual H3RmgObjectGenerator *CreateRMGObjectGen(const RMGObjectInfo &objectInfo) const noexcept override final;
-    virtual H3MapItemTownGate* GetFromMapItem(H3MapItem* mapItem) const noexcept;
+        TownGateExtender();
 
-  public:
-    static TownGateExtender &Get();
-};
+        BOOL VisitMapItem(
+            H3Hero* currentHero,
+            H3MapItem* mapItem,
+            H3Position pos,
+            BOOL isHuman
+        ) const noexcept override final;
 
+        BOOL SetAiMapItemWeight(
+            H3MapItem* mapItem,
+            H3Hero* currentHero,
+            const H3Player* activePlayer,
+            int& aiMapItemWeight,
+            int* moveDistance,
+            H3Position pos
+        ) const noexcept override final;
+
+    public:
+        static TownGateExtender& Get();
+    };
 }

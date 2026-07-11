@@ -1,41 +1,63 @@
 #pragma once
 
-namespace prospector
-{
 
-struct H3MapItemProspector// : H3MapitemMysticGarden
-{
-    unsigned resourceType : 5;
-    /** @brief [05] which players have come by*/
-    unsigned visited : 8;
-    /** @brief [13]*/
-    unsigned resourceAmount : 10;
-    unsigned _u1 : 9;
+namespace prospector {
+    // type 144, subtype 10
+    constexpr int PROSPECTOR_OBJECT_SUBTYPE = 10;
 
-  public:
-    void Reset();
-};
+    struct H3MapItemProspector// : H3MapitemMysticGarden
+    {
+        unsigned resourceType : 5;
+        /** @brief [05] which players have come by*/
+        unsigned visited : 8;
+        /** @brief [13]*/
+        unsigned resourceAmount : 10;
+        unsigned _u1 : 9;
 
-class ProspectorExtender : public extender::ObjectExtender
-{
-    ProspectorExtender();
+    public:
+        void Reset();
+    };
 
-    virtual ~ProspectorExtender();
+    class ProspectorExtender final
+        : public H3ActiveObject<H3MapItemProspector>
+    {
+    private:
+        static ProspectorExtender* instance;
 
-  private:
-    virtual BOOL SetHintInH3TextBuffer(H3MapItem* mapItem, const H3Hero* currentHero, const int playerId,
-        BOOL isRightClick) const noexcept override final;
-    virtual BOOL InitNewGameMapItemSetup(H3MapItem* mapItem) const noexcept override final;
-    virtual BOOL InitNewWeekMapItemSetup(H3MapItem* mapItem) const noexcept override final;
-    virtual BOOL VisitMapItem(H3Hero *currentHero, H3MapItem *mapItem, const H3Position pos,
-                              const BOOL isHuman) const noexcept override final;
-    virtual BOOL SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *currentHero, const H3Player *activePlayer,
-                                    int &aiMapItemWeight, int* moveDistance, const H3Position pos) const noexcept override final;
-    virtual H3RmgObjectGenerator *CreateRMGObjectGen(const RMGObjectInfo &objectInfo) const noexcept override final;
-    virtual H3MapItemProspector* GetFromMapItem(H3MapItem* mapItem) const noexcept;
+        ProspectorExtender();
 
-  public:
-    static ProspectorExtender&Get();
-};
+        BOOL InitNewGameMapItemSetup(
+            H3MapItem* mapItem
+        ) const noexcept override final;
 
+        BOOL InitNewWeekMapItemSetup(
+            H3MapItem* mapItem
+        ) const noexcept override final;
+
+        BOOL SetHintInH3TextBuffer(
+            H3MapItem* mapItem,
+            const H3Hero* currentHero,
+            int playerId,
+            BOOL isRightClick
+        ) const noexcept override final;
+
+        BOOL VisitMapItem(
+            H3Hero* currentHero,
+            H3MapItem* mapItem,
+            H3Position pos,
+            BOOL isHuman
+        ) const noexcept override final;
+
+        BOOL SetAiMapItemWeight(
+            H3MapItem* mapItem,
+            H3Hero* currentHero,
+            const H3Player* activePlayer,
+            int& aiMapItemWeight,
+            int* moveDistance,
+            H3Position pos
+        ) const noexcept override final;
+
+    public:
+        static ProspectorExtender& Get();
+    };
 }

@@ -1,40 +1,53 @@
 #pragma once
 
-namespace mineralSpring
-{
-constexpr int MOVE_POINTS_GIVEN = 600;
-constexpr int LUCK_GIVEN = 1;
 
-struct H3MapItemMineralSpring
-{
-    static constexpr LPCSTR ErmVariableFormat = "mineralSpring_%d";
+namespace mineralSpring {
+    // type 144, subtype 4
+    constexpr int MINERAL_SPRING_OBJECT_SUBTYPE = 4;
+    constexpr int MOVE_POINTS_GIVEN = 600;
+    constexpr int LUCK_GIVEN = 1;
 
-  public:
-    static BOOL IsVisitedByHero(const H3Hero *hero) noexcept;
-    static void SetAsVisited(const H3Hero* hero) noexcept;
-    static void SetAsNotVisited(const H3Hero* hero) noexcept;
-};
+    struct H3MapItemMineralSpring
+    {
+        static constexpr LPCSTR ErmVariableFormat = "mineralSpring_%d";
 
-class MineralSpringExtender : public extender::ObjectExtender
-{
+        static BOOL IsVisitedByHero(const H3Hero* hero) noexcept;
+        static void SetAsVisited(const H3Hero* hero) noexcept;
+        static void SetAsNotVisited(const H3Hero* hero) noexcept;
+    };
 
-    MineralSpringExtender();
+    class MineralSpringExtender final
+        : public H3ActiveObject<H3MapItemMineralSpring>
+    {
+    private:
+        static MineralSpringExtender* instance;
 
-    virtual ~MineralSpringExtender();
+        MineralSpringExtender();
 
-  private:
-    virtual BOOL SetHintInH3TextBuffer(H3MapItem* mapItem, const H3Hero* currentHero, const int playerId,
-          BOOL isRightClick) const noexcept override final;
-    virtual BOOL VisitMapItem(H3Hero *currentHero, H3MapItem *mapItem, const H3Position pos,
-                              const BOOL isHuman) const noexcept override final;
-    virtual BOOL SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *currentHero, const H3Player *activePlayer,
-                                    int &aiMapItemWeight, int* moveDistance, const H3Position pos) const noexcept override final;
-    virtual H3RmgObjectGenerator *CreateRMGObjectGen(const RMGObjectInfo &objectInfo) const noexcept override final;
-    virtual H3MapItemMineralSpring* GetFromMapItem(H3MapItem* mapItem) const noexcept;
+        BOOL SetHintInH3TextBuffer(
+            H3MapItem* mapItem,
+            const H3Hero* currentHero,
+            int playerId,
+            BOOL isRightClick
+        ) const noexcept override final;
 
+        BOOL VisitMapItem(
+            H3Hero* currentHero,
+            H3MapItem* mapItem,
+            H3Position pos,
+            BOOL isHuman
+        ) const noexcept override final;
 
-  public:
-    static MineralSpringExtender &Get();
-};
+        BOOL SetAiMapItemWeight(
+            H3MapItem* mapItem,
+            H3Hero* currentHero,
+            const H3Player* activePlayer,
+            int& aiMapItemWeight,
+            int* moveDistance,
+            H3Position pos
+        ) const noexcept override final;
 
+    public:
+        static MineralSpringExtender& Get();
+    };
 }

@@ -1,30 +1,33 @@
 #pragma once
 
-namespace junkman
-{
 
-struct H3MapItemJunkman
-{
+namespace junkman {
+    // type 144, subtype 7
+    constexpr int JUNKMAN_OBJECT_SUBTYPE = 7;
 
-};
+    struct H3MapItemJunkman
+    {
 
-class JunkmanExtender : public extender::ObjectExtender
-{
-    JunkmanExtender();
+    };
 
-    virtual ~JunkmanExtender();
+    class JunkmanExtender final
+        : public H3ActiveObject<H3MapItemJunkman>
+    {
+    private:
+        static JunkmanExtender* instance;
 
-  private:
-    virtual void CreatePatches() override;
-    virtual BOOL VisitMapItem(H3Hero *currentHero, H3MapItem *mapItem, const H3Position pos,
-                              const BOOL isHuman) const noexcept override final;
-    virtual BOOL SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *currentHero, const H3Player *activePlayer,
-                                    int &aiMapItemWeight, int* moveDistance, const H3Position pos) const noexcept override final;
-    virtual H3RmgObjectGenerator* CreateRMGObjectGen(const RMGObjectInfo& objectInfo) const noexcept override final;
-    virtual H3MapItemJunkman* GetFromMapItem(H3MapItem* mapItem) const noexcept;
+        void CreatePatches() override final;
 
-  public:
-    static JunkmanExtender &Get();
-};
+        JunkmanExtender();
 
+        BOOL VisitMapItem(
+            H3Hero* currentHero,
+            H3MapItem* mapItem,
+            H3Position pos,
+            BOOL isHuman
+        ) const noexcept override final;
+
+    public:
+        static JunkmanExtender& Get();
+    };
 }

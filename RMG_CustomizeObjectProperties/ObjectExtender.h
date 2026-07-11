@@ -27,13 +27,10 @@ class ObjectExtender
     int objectSubtype = eObject::NO_OBJ;
     BOOL m_isInited = FALSE;
     PatcherInstance *_pi = nullptr;
-    //LPCSTR visitingMessage = nullptr;
 
   public:
     static constexpr LPCSTR extraObjectInfo_key = "RMG.objectGeneration.%d.%d.text.hint";
     static constexpr LPCSTR visit_key = "RMG.objectGeneration.%d.%d.text.visit";
-    static constexpr LPCSTR visited_key = "RMG.objectGeneration.%d.%d.text.visited";
-    static constexpr LPCSTR cannotVisit_key = "RMG.objectGeneration.%d.%d.text.cannotVisit";
 
   public:
     ObjectExtender(PatcherInstance *_pi) : _pi(_pi)
@@ -66,6 +63,11 @@ class ObjectExtender
         }
         return objGen;
     }
+
+    //virtual H3MapItem* GetFromMapItem(H3MapItem* mapItem) const noexcept
+    //{
+
+    //}
 
     virtual BOOL InitNewGameMapItemSetup(H3MapItem *mapItem) const noexcept
     {
@@ -113,25 +115,6 @@ class ObjectExtender
             isRightClick ? "\n\n" : " ",
             P_GeneralText->GetText(isVisitedByHero ? 354 : 355));
         objName->Append(h3_TextBuffer);
-    }
-
-    H3String GetStringMessage(LPCSTR key) const
-    {
-        H3String message = H3String::Format("{%s}", RMGObjectInfo::GetObjectName(this->objectType, this->objectSubtype));
-        message.Append(
-            EraJS::read(H3String::Format(key, this->objectType, this->objectSubtype)
-                .String()));
-        return message;
-    }
-
-    H3String GetVisitingMessage() const
-    {
-        return GetStringMessage(visit_key);
-    }
-
-    H3String GetVisitedMessage() const
-    {
-        return GetStringMessage(visited_key);
     }
 
   public:

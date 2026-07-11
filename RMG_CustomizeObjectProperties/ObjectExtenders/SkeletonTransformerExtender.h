@@ -1,29 +1,31 @@
 #pragma once
 
-namespace skeletonTransformer
-{
 
-struct H3MapItemSkeletonTransformer
-{
+namespace skeletonTransformer {
+    // type 144, subtype 1
+    constexpr int SKELETON_TRANSFORMER_OBJECT_SUBTYPE = 1;
 
-};
+    struct H3MapItemSkeletonTransformer
+    {
 
-class SkeletonTransformerExtender : public extender::ObjectExtender
-{
-    SkeletonTransformerExtender();
+    };
 
-    virtual ~SkeletonTransformerExtender();
+    class SkeletonTransformerExtender final
+        : public H3ActiveObject<H3MapItemSkeletonTransformer>
+    {
+    private:
+        static SkeletonTransformerExtender* instance;
 
-  private:
-    virtual BOOL VisitMapItem(H3Hero *currentHero, H3MapItem *mapItem, const H3Position pos,
-                              const BOOL isHuman) const noexcept override final;
-    virtual BOOL SetAiMapItemWeight(H3MapItem *mapItem, H3Hero *currentHero, const H3Player *activePlayer,
-                                    int &aiMapItemWeight, int* moveDistance, const H3Position pos) const noexcept override final;
-    virtual H3RmgObjectGenerator *CreateRMGObjectGen(const RMGObjectInfo &objectInfo) const noexcept override final;
-    virtual H3MapItemSkeletonTransformer* GetFromMapItem(H3MapItem* mapItem) const noexcept;
+        SkeletonTransformerExtender();
 
-  public:
-    static SkeletonTransformerExtender &Get();
-};
+        BOOL VisitMapItem(
+            H3Hero* currentHero,
+            H3MapItem* mapItem,
+            H3Position pos,
+            BOOL isHuman
+        ) const noexcept override final;
 
+    public:
+        static SkeletonTransformerExtender& Get();
+    };
 }
