@@ -25,7 +25,7 @@ namespace vialOfMana
         {
             *obj = {};
             // Рандомим количество маны
-            obj->manaPts = MIN_MANA + rand() % (MAX_MANA - MIN_MANA + 1); // от 30 до 60 включительно
+            obj->manaPts = H3Random::Rand(MIN_MANA, MAX_MANA);
 
             return true;
         }
