@@ -17,6 +17,8 @@ namespace townGate
     private:
         static TownGateExtender* instance;
 
+        void CreatePatches() override final;
+
         TownGateExtender();
 
         BOOL VisitMapItem(

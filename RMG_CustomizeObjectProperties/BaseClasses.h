@@ -29,6 +29,9 @@
 template<typename TMapItem>
 class H3MapObject : public extender::ObjectExtender
 {
+    static constexpr LPCSTR name_key =
+        "RMG.objectGeneration.%d.%d.name";
+
 protected:
     H3MapObject(
         LPCSTR instanceName,
