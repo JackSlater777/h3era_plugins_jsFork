@@ -480,10 +480,7 @@ namespace warlocksLab
     void WarlocksLabExtender::CreatePatches()
     {
         static bool patchesCreated = false;
-        if (patchesCreated)
-        {
-            return;
-        }
+        if (patchesCreated) return;
 
         // H3TradeResourcesDlg::Ctor - 005DF9F0
 

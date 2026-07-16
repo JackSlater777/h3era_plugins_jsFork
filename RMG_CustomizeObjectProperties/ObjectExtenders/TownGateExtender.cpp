@@ -215,7 +215,7 @@ namespace townGate
                 patch2->Destroy();
             }
             else
-            {               
+            {
                 if (g_townGateTargetTownId > -1)
                 {
                     H3Town* targetTown = &P_Game->towns[g_townGateTargetTownId];

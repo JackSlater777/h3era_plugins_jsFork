@@ -44,6 +44,7 @@ OBJECT_EXTENDER_DECLARATOR(VialOfManaExtender, vialOfMana) // 3
 // 146
 OBJECT_EXTENDER_DECLARATOR(SeafaringAcademyExtender, seafaringAcademy) // 0
 OBJECT_EXTENDER_DECLARATOR(ObservatoryExtender, observatory) // 1
+
 OBJECT_EXTENDER_DECLARATOR(TownGateExtender, townGate) // 3
 
 // rest
