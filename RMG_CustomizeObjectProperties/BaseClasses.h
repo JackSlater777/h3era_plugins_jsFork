@@ -116,6 +116,11 @@ template<typename TMapItem>
 class H3VisitingObject : public H3MapObject<TMapItem>
 {
 protected:
+    // Это добавка к стандартному хинту без посещения
+    static constexpr LPCSTR objectInfo_key =
+        "RMG.objectGeneration.%d.%d.text.info";
+
+    // Это после посещения
     static constexpr LPCSTR extraObjectInfo_key = 
         "RMG.objectGeneration.%d.%d.text.hint";
 

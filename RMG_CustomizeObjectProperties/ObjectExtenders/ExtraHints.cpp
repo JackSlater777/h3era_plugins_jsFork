@@ -65,59 +65,6 @@ CHAR SetObjectFlags(H3Game* game, int teamId, CHAR teamFlags)
 }
 
 
-
-BOOL ShowObjectHint(LoHook* h, HookContext* c, BOOL isRightClick)
-{
-    H3MapItem* cell = reinterpret_cast<H3MapItem*>(c->ebx);
-    H3Hero* hero = *reinterpret_cast<H3Hero**>(c->ebp - 0x10);
-    int playerId = P_CurrentPlayerID;
-    int teamId = THISCALL_2(int, 0x4A55D0, P_Game->Get(), playerId);
-
-    eObject type = static_cast<eObject>(cell->objectType);
-
-
-    if (type == eObject::STABLES)
-    {
-        if (P_MePlayerID > 7 || !IsObjectVisitedByTeam(eObject::STABLES, 0, teamId))
-        {
-            return EXEC_DEFAULT;
-        }
-        LPCSTR objName = P_ObjectName[eObject::STABLES];
-        LPCSTR extraInfo = EraJS::read(H3String::Format(extender::ObjectExtender::extraObjectInfo_key, eObject::STABLES, 0).String());
-        extraInfo = H3String::Format(extraInfo, StablesBonus).String();
-
-        if ((*(WORD*)&cell->mirror & 0x1000) != 0 && hero)
-        {
-            sprintf_s(h3_TextBuffer, 0x300u, isRightClick ? "%s\n%s\n\n%s" : "%s %s %s", objName, extraInfo, P_GeneralText->GetText((hero->flags & 2) ? 354 : 355));
-        }
-        else
-        {
-            sprintf_s(h3_TextBuffer, 0x300u, isRightClick ? "%s\n%s" : "%s %s", objName, extraInfo);
-        }
-
-        c->return_address = isRightClick ? 0x4159C0 : 0x40D09B;
-        return NO_EXEC_DEFAULT;
-    }
-    // For RMC-hint there is a GEM erm code
-    else if (type == eObject::REFUGEE_CAMP && !isRightClick)
-    {
-        if (P_MePlayerID > 7 || !IsObjectVisitedByTeam(eObject::REFUGEE_CAMP, cell->objectSubtype, teamId))
-        {
-            return EXEC_DEFAULT;
-        }
-        LPCSTR objName = P_ObjectName[eObject::REFUGEE_CAMP];
-        LPCSTR extraInfo = EraJS::read(H3String::Format(extender::ObjectExtender::extraObjectInfo_key, eObject::REFUGEE_CAMP, -1).String());
-        sprintf_s(h3_TextBuffer, 0x300u, "%s %s", objName,
-            H3String::Format(extraInfo, P_CreatureInformation[cell->objectSubtype].namePlural, cell->setup).String());
-        c->edi = (int)h3_TextBuffer;
-
-        c->return_address = 0x40D059;
-        return NO_EXEC_DEFAULT;
-    }
-
-    return EXEC_DEFAULT;
-}
-
 void ProcObjectFlagsVisitedByTeam(H3Hero* hero, INT32 objType, INT32 objSubtype)
 {
     // 10125A10
@@ -135,12 +82,160 @@ void ProcObjectFlagsVisitedByTeam(H3Hero* hero, INT32 objType, INT32 objSubtype)
 
 _LHF_(LoHook_AdvMgr_GetObjectRightClickText)
 {
-    return ShowObjectHint(h, c, true);
+    H3Game* game = P_Game->Get();
+    H3MapItem* cell = reinterpret_cast<H3MapItem*>(c->ebx);
+    H3Hero* hero = *reinterpret_cast<H3Hero**>(c->ebp - 0x10);
+    int playerId = IntAt(0x6977DC);
+    int teamId = THISCALL_2(int, 0x4A55D0, game, playerId);
+    UINT8 playerBit = IntAt(c->ebp - 0x18);
+    eObject type = static_cast<eObject>(cell->objectType);
+
+    LPCSTR* g_ExtraObjectInfo = reinterpret_cast<LPCSTR*>(IntAt(0x40B395 + 2));
+
+    if (type == eObject::STABLES)
+    {
+        if (P_MePlayerID > 7 || !IsObjectVisitedByTeam(eObject::STABLES, 0, teamId))
+        {
+            return EXEC_DEFAULT;
+        }
+        LPCSTR objName = P_ObjectName[eObject::STABLES];
+        LPCSTR extraInfo = EraJS::read(H3String::Format(extender::ObjectExtender::extraObjectInfo_key, eObject::STABLES, 0).String());
+        extraInfo = H3String::Format(extraInfo, StablesBonus).String();
+
+        if ((*(WORD*)&cell->mirror & 0x1000) != 0 && hero)
+        {
+            sprintf_s(h3_TextBuffer, 0x300u, "%s\n%s\n\n%s", objName, extraInfo, P_GeneralText->GetText((hero->flags & 2) ? 354 : 355));
+        }
+        else
+        {
+            sprintf_s(h3_TextBuffer, 0x300u, "%s\n%s", objName, extraInfo);
+        }
+
+        c->return_address = 0x4159C0;
+        return NO_EXEC_DEFAULT;
+    }
+
+    else if (type == eObject::UNIVERSITY)
+    {
+        LPCSTR objName = P_ObjectName[eObject::UNIVERSITY];
+
+        // Object scouting - daemon_n сделал посещённость универа от 5 битов
+        BOOL playerVisited = THISCALL_2(bool, 0x529B70, cell, H3HumanID::Get());
+
+        // Стандартный хинт без посещения - добавляем строку старого расширения хинта
+        if ((cell->access & 0x10) == 0 ||
+            playerId > 7 ||
+            !playerVisited
+            )
+        {
+            LPCSTR extraInfo = g_ExtraObjectInfo[24];
+            sprintf_s(h3_TextBuffer, 0x300u, "%s\n%s",
+                objName, extraInfo);
+
+            c->return_address = 0x4159C0;
+            return NO_EXEC_DEFAULT;
+        }
+
+        // For visited there is a GEM erm code
+    }
+
+    // For RMC-hint there is a GEM erm code
+    //else if (type == eObject::REFUGEE_CAMP)
+
+    return EXEC_DEFAULT;
 }
 
 _LHF_(LoHook_AdvMgr_GetObjectCommand)
 {
-    return ShowObjectHint(h, c, false);
+    // hover-hint
+
+    H3Game* game = P_Game->Get();
+    H3MapItem* cell = reinterpret_cast<H3MapItem*>(c->ebx);
+    H3Hero* hero = *reinterpret_cast<H3Hero**>(c->ebp - 0x10);
+    int playerId = IntAt(0x6977DC);
+    int teamId = THISCALL_2(int, 0x4A55D0, game, playerId);
+    UINT8 playerBit = IntAt(c->ebp - 0x14);
+    eObject type = static_cast<eObject>(cell->objectType);
+    LPCSTR* g_ExtraObjectInfo = reinterpret_cast<LPCSTR*>(IntAt(0x40B395 + 2));
+
+    if (type == eObject::STABLES)
+    {
+        if (P_MePlayerID > 7 || !IsObjectVisitedByTeam(eObject::STABLES, 0, teamId))
+        {
+            return EXEC_DEFAULT;
+        }
+        LPCSTR objName = P_ObjectName[eObject::STABLES];
+        LPCSTR extraInfo = EraJS::read(H3String::Format(extender::ObjectExtender::extraObjectInfo_key, eObject::STABLES, 0).String());
+        extraInfo = H3String::Format(extraInfo, StablesBonus).String();
+
+        if ((*(WORD*)&cell->mirror & 0x1000) != 0 && hero)
+        {
+            sprintf_s(h3_TextBuffer, 0x300u, "%s %s %s", objName, extraInfo, P_GeneralText->GetText((hero->flags & 2) ? 354 : 355));
+        }
+        else
+        {
+            sprintf_s(h3_TextBuffer, 0x300u, "%s %s", objName, extraInfo);
+        }
+
+        c->return_address = 0x40D09B;
+        return NO_EXEC_DEFAULT;
+    }
+
+    else if (type == eObject::UNIVERSITY)
+    {
+        LPCSTR objName = P_ObjectName[eObject::UNIVERSITY];
+
+        // Object scouting - daemon_n сделал посещённость универа от 5 битов
+        BOOL playerVisited = THISCALL_2(bool, 0x529B70, cell, H3HumanID::Get());
+
+        // Стандартный хинт без посещения - добавляем строку старого расширения хинта
+        if ((cell->access & 0x10) == 0 ||
+            playerId > 7 ||
+            !playerVisited
+            )
+        {
+            LPCSTR extraInfo = g_ExtraObjectInfo[24];
+            sprintf_s(h3_TextBuffer, 0x300u, "%s %s",
+                objName, extraInfo);
+        }
+
+        // Если посетили, добавляем имена скиллов
+        else
+        {
+            int* skills = THISCALL_1(int*, 0x405DA0, cell);
+
+            sprintf_s(h3_TextBuffer, 0x300u, "%s (%s, %s, %s, %s)",
+                objName,
+                P_SecondarySkillInfo[skills[0]].name,
+                P_SecondarySkillInfo[skills[1]].name,
+                P_SecondarySkillInfo[skills[2]].name,
+                P_SecondarySkillInfo[skills[3]].name);
+        }
+
+
+        c->edi = (int)h3_TextBuffer;
+        c->return_address = 0x40D059;
+        return NO_EXEC_DEFAULT;
+    }
+
+    // For RMC-hint there is a GEM erm code
+    else if (type == eObject::REFUGEE_CAMP)
+    {
+        if (playerId > 7 || !IsObjectVisitedByTeam(eObject::REFUGEE_CAMP, cell->objectSubtype, teamId))
+        {
+            return EXEC_DEFAULT;
+        }
+        LPCSTR objName = P_ObjectName[eObject::REFUGEE_CAMP];
+        LPCSTR extraInfo = EraJS::read(H3String::Format(extender::ObjectExtender::extraObjectInfo_key, eObject::REFUGEE_CAMP, -1).String());
+        sprintf_s(h3_TextBuffer, 0x300u, "%s %s", objName,
+            H3String::Format(extraInfo, P_CreatureInformation[cell->objectSubtype].namePlural, cell->setup).String());
+        c->edi = (int)h3_TextBuffer;
+
+        c->return_address = 0x40D059;
+        return NO_EXEC_DEFAULT;
+    }
+
+    return EXEC_DEFAULT;
 }
 
 

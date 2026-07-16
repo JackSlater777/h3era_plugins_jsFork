@@ -70,6 +70,7 @@
     <ClInclude Include="ObjectExtenders\ObservatoryExtender.h" />
     <ClInclude Include="ObjectExtenders\ProspectorExtender.h" />
     <ClInclude Include="ObjectExtenders\SeaBarrelExtender.h" />
+    <ClInclude Include="ObjectExtenders\SeafaringAcademyExtender.h" />
     <ClInclude Include="ObjectExtenders\SkeletonTransformerExtender.h" />
     <ClInclude Include="ObjectExtenders\SpellMarketExtender.h" />
     <ClInclude Include="ObjectExtenders\TempleOfLoyaltyExtender.h" />
@@ -77,7 +78,7 @@
     <ClInclude Include="ObjectExtenders\TrailblazerExtender.h" />
     <ClInclude Include="ObjectExtenders\UniversityExtender.h" />
     <ClInclude Include="ObjectExtenders\VialOfManaExtender.h" />
-    <ClInclude Include="ObjectExtenders\WarlocksLab.h" />
+    <ClInclude Include="ObjectExtenders\WarlocksLabExtender.h" />
     <ClInclude Include="ObjectExtenders\WaterObjectsPassability.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="ObjectExtenders\ColosseumOfTheMagiExtender.h" />
@@ -114,6 +115,7 @@
     <ClCompile Include="ObjectExtenders\ObservatoryExtender.cpp" />
     <ClCompile Include="ObjectExtenders\ProspectorExtender.cpp" />
     <ClCompile Include="ObjectExtenders\SeaBarrelExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\SeafaringAcademyExtender.cpp" />
     <ClCompile Include="ObjectExtenders\SkeletonTransformerExtender.cpp" />
     <ClCompile Include="ObjectExtenders\SpellMarketExtender.cpp" />
     <ClCompile Include="ObjectExtenders\TempleOfLoyaltyExtender.cpp" />
@@ -121,7 +123,7 @@
     <ClCompile Include="ObjectExtenders\TrailblazerExtender.cpp" />
     <ClCompile Include="ObjectExtenders\UniversityExtender.cpp" />
     <ClCompile Include="ObjectExtenders\VialOfManaExtender.cpp" />
-    <ClCompile Include="ObjectExtenders\WarlocksLab.cpp" />
+    <ClCompile Include="ObjectExtenders\WarlocksLabExtender.cpp" />
     <ClCompile Include="ObjectExtenders\WaterObjectsPassability.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="ObjectExtenders\ColosseumOfTheMagiExtender.cpp" />

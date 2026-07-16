@@ -1,5 +1,5 @@
 #include "../pch.h"
-#include "WarlocksLab.h"
+#include "WarlocksLabExtender.h"
 
 
 namespace warlocksLab
@@ -276,14 +276,14 @@ namespace warlocksLab
 
     H3BaseDlg* __stdcall HiHook_005df9f0(HiHook* h, H3BaseDlg* this_, int x, int y)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
             IntAt(0x6AAB04) = x + 33;
             IntAt(0x6AAB08) = y + 34;
         }
         H3BaseDlg* result = THISCALL_3(H3BaseDlg*, h->GetDefaultFunc(), this_, x, y);
 
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
             H3WarlocksLabDlg_Ctor(this_);
         }
@@ -292,7 +292,7 @@ namespace warlocksLab
 
     _LHF_(LoHook_005dfa22)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
             *(DWORD*)c->esp = 534;
             *(DWORD*)(c->esp + 4) = 526;
@@ -302,7 +302,7 @@ namespace warlocksLab
 
     _LHF_(LoHook_005dfaf7)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
             c->esp -= 4;
             *(DWORD*)c->esp = (int)"TPLABTRN.pcx";
@@ -313,7 +313,7 @@ namespace warlocksLab
 
     _LHF_(LoHook_WarlocksLab_Smt)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
             *(DWORD*)c->esp = 501;
             *(DWORD*)(c->esp + 4) = 518;
@@ -323,9 +323,15 @@ namespace warlocksLab
 
     _LHF_(LoHook_005eab8b)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
-            LPCSTR dlgHint = EraJS::read(H3String::Format("RMG.objectGeneration.%d.%d.text.dlgHintDeal", eHotaObject::ACTIVE, eHotaObjectActiveType::WARLOCKS_LAB).String());
+            LPCSTR dlgHint = EraJS::read(
+                H3String::Format(
+                    dlgHintDeal_key, 
+                    extender::HOTA_OBJECT_TYPE, 
+                    WARLOCKS_LAB_OBJECT_SUBTYPE
+                ).String());
+
             c->eax = (int)dlgHint;
             return NO_EXEC_DEFAULT;
         }
@@ -334,9 +340,15 @@ namespace warlocksLab
 
     _LHF_(LoHook_005eabcb)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
-            LPCSTR dlgHint = EraJS::read(H3String::Format("RMG.objectGeneration.%d.%d.text.dlgHintDealDone", eHotaObject::ACTIVE, eHotaObjectActiveType::WARLOCKS_LAB).String());
+            LPCSTR dlgHint = EraJS::read(
+                H3String::Format(
+                    dlgHintDealDone_key, 
+                    extender::HOTA_OBJECT_TYPE, 
+                    WARLOCKS_LAB_OBJECT_SUBTYPE
+                ).String());
+
             c->eax = (int)dlgHint;
             return NO_EXEC_DEFAULT;
         }
@@ -345,9 +357,15 @@ namespace warlocksLab
 
     _LHF_(LoHook_005eabd3)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
-            LPCSTR dlgHint = EraJS::read(H3String::Format("RMG.objectGeneration.%d.%d.text.dlgHint", eHotaObject::ACTIVE, eHotaObjectActiveType::WARLOCKS_LAB).String());
+            LPCSTR dlgHint = EraJS::read(
+                H3String::Format(
+                    dlgHint_key, 
+                    extender::HOTA_OBJECT_TYPE, 
+                    WARLOCKS_LAB_OBJECT_SUBTYPE
+                ).String());
+
             c->eax = (int)dlgHint;
             return NO_EXEC_DEFAULT;
         }
@@ -356,10 +374,13 @@ namespace warlocksLab
 
     _LHF_(LoHook_005eac0e)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
-            LPCSTR dlgHint = EraJS::read(H3String::Format("RMG.objectGeneration.%d.%d.name", eHotaObject::ACTIVE, eHotaObjectActiveType::WARLOCKS_LAB).String());
-            c->edi = (int)dlgHint;
+            LPCSTR name = RMGObjectInfo::GetObjectName(
+                extender::HOTA_OBJECT_TYPE, 
+                WARLOCKS_LAB_OBJECT_SUBTYPE);
+
+            c->edi = (int)name;
 
             c->return_address = 0x5EAC45;
             return NO_EXEC_DEFAULT;
@@ -369,9 +390,15 @@ namespace warlocksLab
 
     _LHF_(LoHook_005eacb2)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
-            LPCSTR dlgHint = EraJS::read(H3String::Format("RMG.objectGeneration.%d.%d.text.dlgHintAvalObjs", eHotaObject::ACTIVE, eHotaObjectActiveType::WARLOCKS_LAB).String());
+            LPCSTR dlgHint = EraJS::read(
+                H3String::Format(
+                    dlgHintAvalObjs_key, 
+                    extender::HOTA_OBJECT_TYPE, 
+                    WARLOCKS_LAB_OBJECT_SUBTYPE
+                ).String());
+
             c->edi = (int)dlgHint;
             return NO_EXEC_DEFAULT;
         }
@@ -380,7 +407,7 @@ namespace warlocksLab
 
     _LHF_(LoHook_005eaec0)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
             c->return_address = 0x5EAF23;
             return NO_EXEC_DEFAULT;
@@ -390,7 +417,7 @@ namespace warlocksLab
 
     _LHF_(LoHook_005eaf38)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
             c->return_address = 0x5EAF96;
             return NO_EXEC_DEFAULT;
@@ -400,7 +427,7 @@ namespace warlocksLab
 
     _LHF_(LoHook_005eb0c5)
     {
-        if (P_MarketBuilding != eMarketBuilding::WARLOCKS_LAB || c->esi != 35 && c->esi != 37 && c->esi != 41)
+        if (P_MarketBuilding != WARLOCKS_LAB_MARKET_BUILDING || c->esi != 35 && c->esi != 37 && c->esi != 41)
         {
             return EXEC_DEFAULT;
         }
@@ -410,7 +437,7 @@ namespace warlocksLab
 
     _LHF_(LoHook_005eb14e)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
             c->return_address = 0x5EB168;
             return NO_EXEC_DEFAULT;
@@ -420,9 +447,15 @@ namespace warlocksLab
 
     _LHF_(LoHook_005ed7d1)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
-            LPCSTR dlgHint = EraJS::read(H3String::Format("RMG.objectGeneration.%d.%d.text.dlgHintButtonDeal", eHotaObject::ACTIVE, eHotaObjectActiveType::WARLOCKS_LAB).String());
+            LPCSTR dlgHint = EraJS::read(
+                H3String::Format(
+                    dlgHintButtonDeal_key, 
+                    extender::HOTA_OBJECT_TYPE, 
+                    WARLOCKS_LAB_OBJECT_SUBTYPE
+                ).String());
+
             c->edi = (int)dlgHint;
             return NO_EXEC_DEFAULT;
         }
@@ -431,7 +464,7 @@ namespace warlocksLab
 
     _LHF_(LoHook_005ed909)
     {
-        if (P_MarketBuilding == eMarketBuilding::WARLOCKS_LAB)
+        if (P_MarketBuilding == WARLOCKS_LAB_MARKET_BUILDING)
         {
             c->ecx -= 67;
             *(DWORD*)c->esp = 518;
@@ -441,7 +474,7 @@ namespace warlocksLab
 
     _LHF_(LoHook_WarlocksLab_PatchResExchangeRate)
     {
-        return P_MarketBuilding != eMarketBuilding::WARLOCKS_LAB;
+        return P_MarketBuilding != WARLOCKS_LAB_MARKET_BUILDING;
     }
 
     void WarlocksLabExtender::CreatePatches()
@@ -528,7 +561,7 @@ namespace warlocksLab
                 P_ArtifactMerchant = &P_Game->artifactMerchant;
                 P_ActivePlayerMarkets = 10;  // markets amount owned by player
                 P_MarketType = eMarketType::TRADE_RESOURCES;
-                P_MarketBuilding = eMarketBuilding::WARLOCKS_LAB;
+                P_MarketBuilding = static_cast<eMarketBuilding>(WARLOCKS_LAB_MARKET_BUILDING);
 
                 // Run dlg
                 CDECL_0(void, 0x5EA530);

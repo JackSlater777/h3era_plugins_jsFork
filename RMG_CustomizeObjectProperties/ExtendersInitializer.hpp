@@ -42,6 +42,7 @@ OBJECT_EXTENDER_DECLARATOR(JetsamExtender, jetsam) // 2
 OBJECT_EXTENDER_DECLARATOR(VialOfManaExtender, vialOfMana) // 3
 
 // 146
+OBJECT_EXTENDER_DECLARATOR(SeafaringAcademyExtender, seafaringAcademy) // 0
 OBJECT_EXTENDER_DECLARATOR(ObservatoryExtender, observatory) // 1
 OBJECT_EXTENDER_DECLARATOR(TownGateExtender, townGate) // 3
 
@@ -91,6 +92,7 @@ void InitObjectExtenders()
             OBJECT_EXTENDER_GETTER(VialOfManaExtender, vialOfMana), // 3
 
             // 146
+            OBJECT_EXTENDER_GETTER(SeafaringAcademyExtender, seafaringAcademy), // 0
             OBJECT_EXTENDER_GETTER(ObservatoryExtender, observatory), // 1
             OBJECT_EXTENDER_GETTER(TownGateExtender, townGate), // 3
 
@@ -101,7 +103,7 @@ void InitObjectExtenders()
         constexpr size_t extendersCount =
             std::size(extendersList); // sizeof(extendersList) / sizeof(extender::ObjectExtender*);
 
-        static_assert(extendersCount == 26, "Unexpected number of extenders");
+        static_assert(extendersCount == 27, "Unexpected number of extenders");
         //! Get the extenders and initialize
         for (size_t i = 0; i < extendersCount; i++)
         {
