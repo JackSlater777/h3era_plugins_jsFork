@@ -80,7 +80,7 @@
     <ClInclude Include="ObjectExtenders\UniversityExtender.h" />
     <ClInclude Include="ObjectExtenders\VialOfManaExtender.h" />
     <ClInclude Include="ObjectExtenders\WarlocksLabExtender.h" />
-    <ClInclude Include="ObjectExtenders\WaterObjectsPassability.h" />
+    <ClInclude Include="ObjectExtenders\WaterObjects.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="ObjectExtenders\ColosseumOfTheMagiExtender.h" />
     <ClInclude Include="ObjectExtenders\CreatureBanksExtender.h" />
@@ -126,7 +126,7 @@
     <ClCompile Include="ObjectExtenders\UniversityExtender.cpp" />
     <ClCompile Include="ObjectExtenders\VialOfManaExtender.cpp" />
     <ClCompile Include="ObjectExtenders\WarlocksLabExtender.cpp" />
-    <ClCompile Include="ObjectExtenders\WaterObjectsPassability.cpp" />
+    <ClCompile Include="ObjectExtenders\WaterObjects.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="ObjectExtenders\ColosseumOfTheMagiExtender.cpp" />
     <ClCompile Include="ObjectExtenders\CreatureBanksExtender.cpp" />

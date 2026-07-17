@@ -229,3 +229,213 @@ void WaterObjectsPassability()
     // Непроходимые клетки на воде (10).
     _PI->WriteLoHook(0x56B207, LoHook_WaterUnmoveableTriggers_10);
 }
+
+
+
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
+// Является ли текущий диалог диалогом таверны на воде.
+bool IsWaterTavern = false;
+
+// Пока не ясно, что это
+bool IsBoatCreation = false;
+
+
+
+
+
+
+
+
+
+
+// Посадка героя в лодку на том месте, где он стоит (герой должен быть на карте и не в лодке, если лодки там же нет, она создаётся, если есть - она должна там стоять с начала игры).
+int HeroPlaceToBoat(H3Game* game, H3Hero* hero, char boatSubtype, H3Position coords, char playerId, bool notAddToReplayTurn)
+{
+    // Преобразуем координаты.
+    int x, y, z;
+    H3Position::UnpackXYZ(coords, x, y, z);
+
+    // Если надо - добавляем информацию для просмотра хода и оппонента онлайн.
+    if (!notAddToReplayTurn)
+    {
+        sub_10145120(game, 4);
+
+        // Делаем это только при постановке самого героя.
+
+        // Информация для оппонента.
+        //PlaceBoat_SendMsg(game, coords, o_ActivePlayerID, boat_subtype);
+
+        // Добавляем информмацию для просмотра хода.
+        //CALL_3(void, __thiscall, 0x49C570, this, boat, coords);
+    }
+
+    IsBoatCreation = true;
+    int boat_ix = THISCALL_7(int, 0x4BAF10, game, x, y, z, playerId, notAddToReplayTurn, boatSubtype);
+    IsBoatCreation = false;
+
+    // Не удалсь создать лодку.
+    if (boat_ix < 0)
+    {
+        H3Boat boatObj;
+        THISCALL_1(void, 0x4D76E0, &boatObj); // H3Boat::Ctor
+        boatObj.exists = 0;
+        game->boats.Insert(game->boats.end(), boatObj);
+
+        IsBoatCreation = true;
+        int boat_ix = THISCALL_7(int, 0x4BAF10, game, x, y, z, playerId, notAddToReplayTurn, boatSubtype);
+        IsBoatCreation = false;
+
+        if (boat_ix < 0)
+        {
+            return 0;
+        }
+    }
+
+    H3Boat* boat = &game->boats[boat_ix];
+
+    // Сажаем героя в лодку.
+    // Убираем лодку (или героя) из информации клетки.
+    THISCALL_1(void, 0x4D7950, boat);
+
+    // Если надо - добавляем информацию для просмотра хода и оппонента онлайн.
+    if (!notAddToReplayTurn)
+    {
+        MEMORY[0x49C1D0](game, boat, 1, hero->id); // H3Game::ReplayAction_HideBoat
+        sub_10145120(game, 2);
+        v11 = 1;
+        MEMORY[0x49C790](game, hero, playerId, coords, v11);// H3Game::ReplayAction_PlaceHero
+    }
+
+    // Настраиваем героя.
+    hero->flags |= 0x40000; // Герой в лодке
+    hero->flyPower = -1; // Герой больше не в полёте
+    hero->waterwalkPower = -1; // Герой больше не ходит по воде
+
+    // Пересчитываем ходьбу героя в водную (new_mp = old_mp*new_max/old_max).
+    if (!(hero->temp_mod_flags & 0x1000000))
+    {
+        _int_ new_max = CALL_2(_int32_, __thiscall, 0x4E4C00, hero, TRUE);
+        if (hero->movement_points_max)
+        {
+            hero->movement_points = hero->movement_points * new_max / hero->movement_points_max;
+        }
+        else
+        {
+            hero->movement_points = 0;
+        }
+        hero->movement_points_max = new_max;
+    }
+
+    // Настраиваем лодку.
+    boat->Field<_int32_>(32) = hero->id; // Герой в лодке
+    boat->Field<_bool8_>(36) = TRUE; // Внутри есть герой
+    boat->Field<_int8_>(28) = playerId; // Владелец лодки
+
+
+
+
+
+    return TRUE;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// При посещении водной таверны, запоминаем, что посещение длится сейчас.
+void __stdcall HiHook_ObjTavernVisit_SetTavernIfWater(HiHook* h, _dword_ coords)
+{
+    // Определяем водную таверну (по клетке, где она стоит).
+    if (THISCALL_2(H3MapItem*, 0x412B30, P_AdventureManager->Get(), coords)->land == 8)
+    {
+        IsWaterTavern = true;
+    }
+
+    // Обрабатываем посещение таверны.
+    STDCALL_1(void, h->GetDefaultFunc(), coords);
+
+    // Посещение водной таверны завершено.
+    IsWaterTavern = false;
+}
+
+// Запрещаем покупку героя при отсутствии лодок.
+_LHF_(LoHook_TavernDialog_RestrictIfNoBoats)
+{
+    // Если таверна на воде и лодок уже максимальное число, запрещаем покупку героя.
+    if (IsWaterTavern && THISCALL_1(int, 0x4CCA90, P_Game->Get()) >= 64)
+    {
+        c->return_address = 0x5D8624;
+        return NO_EXEC_DEFAULT;
+    }
+    // Иначе - как обычно.
+    else
+    {
+        return EXEC_DEFAULT;
+    }
+}
+
+// При создании героя во внешней таверне сажаем его в лодку, если это на воде.
+void __stdcall HiHook_PlaceHeroWater_ObjTavern(
+    HiHook* h, H3Hero* this_, int playerId, 
+    _dword_ coords, bool resetFlags)
+{
+    // Клетка - водная...
+    if (THISCALL_2(H3MapItem*, 0x412B30, P_AdventureManager->Get(), coords)->land == 8)
+    {
+        // Посадка героя в лодку.
+        P_Game->HeroPlaceToBoat(this_, ((_int32_*)CasShipTable)[*(_int32_*)(HeroClassesTable + 64 * this_->_class)], coords, player_id, FALSE);
+
+        // Не стираем флаг лодки.
+        if (reset_temp_mod_flags)
+        {
+            // Сбрасываем флаг побега.
+            this_->temp_mod_flags &= ~HTF_SURRENDED;
+
+            // В самой постановке не будем сбрасывать флаги.
+            resetFlags = false;
+        }
+    }
+
+    // Создание героя.
+    CALL_4(void, __thiscall, h->GetDefaultFunc(), this_, playerId, coords, reset_temp_mod_flags);
+}
+
+void WaterTaverns()
+{
+    // При посещении водной таверны, запоминаем, что посещение длится сейчас.
+    _PI->WriteHiHook(0x5d8290, SPLICE_, EXTENDED_, STDCALL_, HiHook_ObjTavernVisit_SetTavernIfWater);
+
+    // Запрещаем покупку героя при отсутствии лодок.
+    _PI->WriteLoHook(0x5d860d, LoHook_TavernDialog_RestrictIfNoBoats);
+
+    // При создании героя внешней таверной сажаем его в лодку, если это на воде.
+    _PI->WriteHiHook(0x4d7b4b, CALL_, EXTENDED_, THISCALL_, HiHook_PlaceHeroWater_ObjTavern);
+}
+
+
+void WaterObjects()
+{
+    WaterObjectsPassability();
+    WaterTaverns();
+}

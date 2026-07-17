@@ -101,14 +101,18 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
             _PI->WriteLoHook(0x4EDE42, CrBanksTxt_BeforeLoad);
 
 
+
             // Module with flags extenders
             FlagsExtender_Init();
+
             // Extra hints
             ExtraHints();
+
             // HD-mod patches
             //HdModPatches();
-            // Water objects unvisitable-triggers
-            WaterObjectsPassability();
+            
+            // Water objects unvisitable-triggers, prisons and taverns
+            WaterObjects();
         }
         break;
     }

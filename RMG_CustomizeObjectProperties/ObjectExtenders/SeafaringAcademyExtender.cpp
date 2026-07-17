@@ -34,7 +34,7 @@ namespace seafaringAcademy
         DWORD* pcxRaw = CDECL_1(DWORD*, 0x617492, 52); // __cdecl new(unsigned int Size2Allocate)
         H3DlgPcx* dlgPcx = THISCALL_8(H3DlgPcx*, 0x44FFA0, pcxRaw, 179, 33, 104, 91, id, "acadbldg.pcx", 2048);// DlgPcx8::Ctor
         int nextId = ++c->ebx;
-        c->eax = (int)dlgPcx;
+        c->eax = (_ptr_)dlgPcx;
         *(DWORD*)(c->ebp - 16) = nextId;
 
         c->return_address = 0x5EFB04;
@@ -50,7 +50,7 @@ namespace seafaringAcademy
             extender::HOTA_UNREACHABLE_OBJECT_TYPE, 
             SEAFARING_ACADEMY_OBJECT_SUBTYPE);
 
-        c->edx = (int)name;
+        c->edx = (_ptr_)name;
         return NO_EXEC_DEFAULT;
     }
 
@@ -66,7 +66,7 @@ namespace seafaringAcademy
                 SEAFARING_ACADEMY_OBJECT_SUBTYPE
             ).String());
 
-        c->edx = (int)dlgHint;
+        c->edx = (_ptr_)dlgHint;
         return NO_EXEC_DEFAULT;
     }
 
@@ -82,7 +82,7 @@ namespace seafaringAcademy
                 SEAFARING_ACADEMY_OBJECT_SUBTYPE
             ).String());
 
-        c->eax = (int)dlgHint;
+        c->eax = (_ptr_)dlgHint;
         return NO_EXEC_DEFAULT;
     }
 
@@ -98,7 +98,7 @@ namespace seafaringAcademy
                 SEAFARING_ACADEMY_OBJECT_SUBTYPE
             ).String());
 
-        c->esi = (int)dlgHint;
+        c->esi = (_ptr_)dlgHint;
         return NO_EXEC_DEFAULT;
     }
 
@@ -114,7 +114,7 @@ namespace seafaringAcademy
                 SEAFARING_ACADEMY_OBJECT_SUBTYPE
             ).String());
 
-        c->eax = (int)dlgHint;
+        c->eax = (_ptr_)dlgHint;
         return NO_EXEC_DEFAULT;
     }
 
@@ -130,7 +130,7 @@ namespace seafaringAcademy
                 SEAFARING_ACADEMY_OBJECT_SUBTYPE
             ).String());
 
-        c->eax = (int)dlgHint;
+        c->eax = (_ptr_)dlgHint;
         return NO_EXEC_DEFAULT;
     }
 
@@ -146,7 +146,7 @@ namespace seafaringAcademy
                 SEAFARING_ACADEMY_OBJECT_SUBTYPE
             ).String());
 
-        c->eax = (int)dlgHint;
+        c->eax = (_ptr_)dlgHint;
         return NO_EXEC_DEFAULT;
     }
 
@@ -162,7 +162,7 @@ namespace seafaringAcademy
                 SEAFARING_ACADEMY_OBJECT_SUBTYPE
             ).String());
 
-        c->ecx = (int)dlgHint;
+        c->ecx = (_ptr_)dlgHint;
         return NO_EXEC_DEFAULT;
     }
 
@@ -202,7 +202,7 @@ namespace seafaringAcademy
             return 1;
 
         c->esp -= 4;
-        *(DWORD*)c->esp = (int)"ACADEMYW.pcx";
+        *(DWORD*)c->esp = (_ptr_)"ACADEMYW.pcx";
 
         return NO_EXEC_DEFAULT;
     }
@@ -261,7 +261,7 @@ namespace seafaringAcademy
     _LHF_(LoHook_005efe49)
     {
         if (g_SeafaringAcademyFlag)
-            g_SkillTexts[(c->ebx - (int)g_UniversityDlg - 120) / 20u] = (H3DlgText*)c->eax; // c->eax = H3DlgText
+            g_SkillTexts[(c->ebx - (_ptr_)g_UniversityDlg - 120) / 20u] = (H3DlgText*)c->eax; // c->eax = H3DlgText
         
         return EXEC_DEFAULT;
     }
@@ -292,7 +292,7 @@ namespace seafaringAcademy
             currentMastery > 2 ? 2 : currentMastery;
 
         unsigned int controlIndex = static_cast<unsigned int>(
-            (c->ebx - (int)g_UniversityDlg - 116) / 20u);
+            (c->ebx - (_ptr_)g_UniversityDlg - 116) / 20u);
 
         H3DlgText* textItem =
             controlIndex < 3

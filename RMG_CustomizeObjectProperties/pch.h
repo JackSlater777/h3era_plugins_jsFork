@@ -35,7 +35,7 @@ constexpr UINT16 H3_MAX_OBJECTS = h3::limits::OBJECTS;
 #include "ObjectExtenders/ExtraHints.h"
 #include "ObjectExtenders/FlagsExtender.h"
 #include "ObjectExtenders/HdModPatches.h"
-#include "ObjectExtenders/WaterObjectsPassability.h"
+#include "ObjectExtenders/WaterObjects.h"
 
 // 1. Place all the obj props into mod/data/objects/*.txt and parse all the mods
 
