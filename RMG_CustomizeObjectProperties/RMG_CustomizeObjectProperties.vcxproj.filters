@@ -42,6 +42,7 @@
     <ClCompile Include="ObjectExtenders\VialOfManaExtender.cpp" />
     <ClCompile Include="ObjectExtenders\WarlocksLabExtender.cpp" />
     <ClCompile Include="ObjectExtenders\SeafaringAcademyExtender.cpp" />
+    <ClCompile Include="ObjectExtenders\AltarOfManaExtender.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdditionalProperties.h" />
@@ -85,5 +86,6 @@
     <ClInclude Include="ObjectExtenders\VialOfManaExtender.h" />
     <ClInclude Include="ObjectExtenders\WarlocksLabExtender.h" />
     <ClInclude Include="ObjectExtenders\SeafaringAcademyExtender.h" />
+    <ClInclude Include="ObjectExtenders\AltarOfManaExtender.h" />
   </ItemGroup>
 </Project>

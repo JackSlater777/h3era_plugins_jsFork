@@ -9,10 +9,10 @@ namespace warlocksLab
     constexpr int WARLOCKS_LAB_MARKET_BUILDING = 5;
 
     constexpr LPCSTR dlgHint_key = "RMG.objectGeneration.%d.%d.text.dlgHint";
-    constexpr LPCSTR dlgHintDealDone_key = "RMG.objectGeneration.%d.%d.text.dlgHintDealDone";
-    constexpr LPCSTR dlgHintAvalObjs_key = "RMG.objectGeneration.%d.%d.text.dlgHintAvalObjs";
-    constexpr LPCSTR dlgHintDeal_key = "RMG.objectGeneration.%d.%d.text.dlgHintDeal";
-    constexpr LPCSTR dlgHintButtonDeal_key = "RMG.objectGeneration.%d.%d.text.dlgHintButtonDeal";
+    constexpr LPCSTR dlgHint1_key = "RMG.objectGeneration.%d.%d.text.dlgHint1";
+    constexpr LPCSTR dlgHint2_key = "RMG.objectGeneration.%d.%d.text.dlgHint2";
+    constexpr LPCSTR dlgHint3_key = "RMG.objectGeneration.%d.%d.text.dlgHint3";
+    constexpr LPCSTR dlgHint4_key = "RMG.objectGeneration.%d.%d.text.dlgHint4";
 
     struct H3MapItemWarlocksLab
     {

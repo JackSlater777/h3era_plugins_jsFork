@@ -327,7 +327,7 @@ namespace warlocksLab
         {
             LPCSTR dlgHint = EraJS::read(
                 H3String::Format(
-                    dlgHintDeal_key, 
+                    dlgHint3_key,
                     extender::HOTA_OBJECT_TYPE, 
                     WARLOCKS_LAB_OBJECT_SUBTYPE
                 ).String());
@@ -344,7 +344,7 @@ namespace warlocksLab
         {
             LPCSTR dlgHint = EraJS::read(
                 H3String::Format(
-                    dlgHintDealDone_key, 
+                    dlgHint1_key,
                     extender::HOTA_OBJECT_TYPE, 
                     WARLOCKS_LAB_OBJECT_SUBTYPE
                 ).String());
@@ -394,7 +394,7 @@ namespace warlocksLab
         {
             LPCSTR dlgHint = EraJS::read(
                 H3String::Format(
-                    dlgHintAvalObjs_key, 
+                    dlgHint2_key,
                     extender::HOTA_OBJECT_TYPE, 
                     WARLOCKS_LAB_OBJECT_SUBTYPE
                 ).String());
@@ -451,7 +451,7 @@ namespace warlocksLab
         {
             LPCSTR dlgHint = EraJS::read(
                 H3String::Format(
-                    dlgHintButtonDeal_key, 
+                    dlgHint4_key,
                     extender::HOTA_OBJECT_TYPE, 
                     WARLOCKS_LAB_OBJECT_SUBTYPE
                 ).String());
