@@ -5156,8 +5156,8 @@ namespace h3
 		INT8 exists;
 		/** @brief [19]*/
 		INT8 index;
-		/** @brief [1A]*/
-		INT8 par1;
+		/** @brief [1A] boat subtype */
+		INT8 subtype;
 		/** @brief [1B]*/
 		INT8 par2;
 		/** @brief [1C]*/
@@ -16502,7 +16502,10 @@ namespace h3
 		H3PlayersBitfield visitedMermaid;
 		H3PlayersBitfield visitedRallyFlag;
 		H3PlayersBitfield visitedTreeKnowledge;
-		H3PlayersBitfield visitedShrines;
+		/** @brief [4E357] */
+		H3PlayersBitfield visitedShrineOfIncantation;
+		H3PlayersBitfield visitedShrineOfGesture;
+		H3PlayersBitfield visitedShrineOfThought;
 		H3PlayersBitfield visitedIdolFortune;
 		H3PlayersBitfield visitedTemples;
 		H3PlayersBitfield visitedUniversities;
