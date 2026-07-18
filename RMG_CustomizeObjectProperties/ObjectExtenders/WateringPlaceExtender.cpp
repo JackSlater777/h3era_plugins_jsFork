@@ -25,7 +25,7 @@ namespace wateringPlace
     {
         for (const auto heroId : P_Game->players[P_CurrentPlayerID].heroIDs)
         {
-            auto hero = &P_Game->heroes[heroId];
+            H3Hero* hero = P_Game->GetHero(heroId);
 
             if (H3MapItemWateringPlace::IsVisitedByHero(hero))
             {
