@@ -614,8 +614,11 @@ _LHF_(LoHook_PrisonCreateHero_ResetFlags)
 // Отправляем сообщение нового формата при постройке лодки.
 _LHF_(LoHook_CreateBoat_NetMsg)
 {
-    // Отсылаем сообщение.
-    PlaceBoat_SendMsg(P_Game->Get(), c->edi, IntAt(0x69CCF4), ByteAt(c->ebp + 28));
+    if (!IsBoatCreation)
+    {
+        // Отсылаем сообщение.
+        PlaceBoat_SendMsg(P_Game->Get(), c->edi, IntAt(0x69CCF4), ByteAt(c->ebp + 28));
+    }
 
     c->return_address = 0x4BB054;
     return NO_EXEC_DEFAULT;
