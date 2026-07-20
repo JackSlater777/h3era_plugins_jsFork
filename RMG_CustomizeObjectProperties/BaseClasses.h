@@ -24,6 +24,12 @@
 
 
 
+//void SetAiValuesPatches()
+//{
+//
+//}
+
+
 // Общая идентификация объекта, получение структуры из H3MapItem 
 // и создание RMG-генератора
 template<typename TMapItem>
@@ -203,6 +209,18 @@ protected:
     }
 
     ~H3ActiveObject() override = default;
+
+    virtual BOOL AI_MapGoal_Value(H3MapItem* mapItem, H3Hero* currentHero, const H3Player* activePlayer,
+        int& aiResWeight, int* moveDistance, const H3Position pos) const noexcept
+    {
+        return false;
+    }
+
+    virtual BOOL AI_Scouting_Value(H3MapItem* mapItem, H3Hero* currentHero, const H3Player* activePlayer,
+        int& aiResWeight, int* moveDistance, const H3Position pos) const noexcept
+    {
+        return false;
+    }
 };
 
 

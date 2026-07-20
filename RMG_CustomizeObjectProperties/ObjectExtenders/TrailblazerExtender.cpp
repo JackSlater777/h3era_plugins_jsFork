@@ -31,7 +31,7 @@ namespace trailblazer {
                 const bool isVisitedByHero = H3MapItemTrailblazer::IsVisitedByHero(hero);
                 if (isVisitedByHero)
                 {
-                    int stepTrailCost = 75;
+                    int stepTrailCost = TRAILBLAZER_STEP_COST;
                     if ((direction & 1) != 0)
                     {
                         stepTrailCost = static_cast<int>(static_cast<float>(stepTrailCost) * 1.4142135f);
@@ -113,7 +113,7 @@ namespace trailblazer {
                 {
                     FASTCALL_12(void, 0x4F6C00,
                         this->GetVisitingMessage().String(),
-                        1, -1, -1, -1, 0, -1, 0, -1, 0, -1, -777);
+                        1, -1, -1, 42, 0, -1, 0, -1, 0, -1, -777);
                 }
             }
 

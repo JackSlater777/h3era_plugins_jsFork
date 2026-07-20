@@ -5,6 +5,7 @@ namespace trailblazer
 {
     // type 144, subtype 11
     constexpr int TRAILBLAZER_OBJECT_SUBTYPE = 11;
+    constexpr INT32 TRAILBLAZER_STEP_COST = 75;
     constexpr INT32 TRAILBLAZER_TERRAIN_TYPE = eTerrain::ROUGH;
 
     struct H3MapItemTrailblazer
