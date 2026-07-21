@@ -50,6 +50,8 @@ namespace trailblazer
             H3Position pos
         ) const noexcept override final;
 
+        int AI_OnScouting_Value() const noexcept override final;
+
     public:
         static TrailblazerExtender& Get();
     };

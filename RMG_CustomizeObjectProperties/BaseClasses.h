@@ -24,10 +24,6 @@
 
 
 
-//void SetAiValuesPatches()
-//{
-//
-//}
 
 
 // Общая идентификация объекта, получение структуры из H3MapItem 
@@ -82,17 +78,31 @@ protected:
         return SetDefaultHint(mapItem);
     }
 
+    //TMapItem* GetFromMapItem(
+    //    H3MapItem* mapItem) const noexcept
+    //{
+    //    if (!mapItem ||
+    //        mapItem->objectType != this->objectType ||
+    //        mapItem->objectSubtype != this->objectSubtype)
+    //    {
+    //        return nullptr;
+    //    }
+
+    //    return reinterpret_cast<TMapItem*>(&mapItem->setup);
+    //}
+
     TMapItem* GetFromMapItem(
         H3MapItem* mapItem) const noexcept
     {
-        if (!mapItem ||
-            mapItem->objectType != this->objectType ||
-            mapItem->objectSubtype != this->objectSubtype)
-        {
-            return nullptr;
-        }
+        return reinterpret_cast<TMapItem*>(
+            GetSetupFromMapItem(mapItem));
+    }
 
-        return reinterpret_cast<TMapItem*>(&mapItem->setup);
+    const TMapItem* GetFromMapItem(
+        const H3MapItem* mapItem) const noexcept
+    {
+        return reinterpret_cast<const TMapItem*>(
+            GetSetupFromMapItem(mapItem));
     }
 
     H3RmgObjectGenerator* CreateRMGObjectGen(

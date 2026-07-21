@@ -142,4 +142,9 @@ namespace mineralSpring {
 
         return false;
     }
+
+    int MineralSpringExtender::AI_OnScouting_Value() const noexcept
+    {
+        return 1;
+    }
 }

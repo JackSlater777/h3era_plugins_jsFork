@@ -164,4 +164,9 @@ namespace trailblazer {
 
         return false;
     }
+
+    int TrailblazerExtender::AI_OnScouting_Value() const noexcept
+    {
+        return 10;
+    }
 }

@@ -153,4 +153,9 @@ namespace observatory {
 
         return false;
     }
+
+    int ObservatoryExtender::AI_OnScouting_Value() const noexcept
+    {
+        return 50;
+    }
 }

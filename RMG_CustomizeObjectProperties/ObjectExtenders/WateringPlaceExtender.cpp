@@ -192,4 +192,9 @@ namespace wateringPlace
 
         return false;
     }
+
+    int WateringPlaceExtender::AI_OnScouting_Value() const noexcept
+    {
+        return 1;
+    }
 }
