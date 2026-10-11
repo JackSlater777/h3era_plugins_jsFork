@@ -703,6 +703,8 @@ void WaterTavernsAndPrisons()
     // максимальный положительный imm8, корректно представимый через 83 /7, — 0x7F
     //_PI->WriteByte(0x4BAF82 + 2, 0xff);
     _PI->WriteLoHook(0x4BAF82, LoHook_004BAF82);
+    _PI->WriteByte(0x49E18B + 2, 0xff);
+    _PI->WriteByte(0x5D3AE6 + 2, 0xff);
 
     // При посещении водной таверны, запоминаем, что посещение длится сейчас.
     _PI->WriteHiHook(0x5d8290, SPLICE_, EXTENDED_, STDCALL_, HiHook_ObjTavernVisit_SetTavernIfWater);
